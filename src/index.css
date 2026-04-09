@@ -1,0 +1,478 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    /* Neural Interface Color System */
+    --background: 222 47% 3%;
+    --foreground: 220 60% 98%;
+    --card: 222 35% 6%;
+    --card-foreground: 220 60% 98%;
+    --popover: 222 35% 6%;
+    --popover-foreground: 220 60% 98%;
+    --primary: 187 100% 50%;
+    --primary-foreground: 222 47% 3%;
+    --secondary: 222 20% 12%;
+    --secondary-foreground: 220 60% 98%;
+    --muted: 222 20% 15%;
+    --muted-foreground: 216 30% 70%;
+    --accent: 187 100% 50%;
+    --accent-foreground: 222 47% 3%;
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 0 0% 98%;
+    --border: 222 20% 15%;
+    --input: 222 20% 15%;
+    --ring: 187 100% 50%;
+    --radius: 0.5rem;
+    
+    /* Custom Neural Colors */
+    --void-black: #020617;
+    --void-dark: #0A192F;
+    --neon-cyan: #00F0FF;
+    --neon-blue: #4D9FFF;
+    --soft-blue: #9DC4FF;
+    --text-primary: #F2F7FF;
+    --text-secondary: #A7B3C7;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  
+  html {
+    scroll-behavior: auto !important;
+  }
+  
+  body {
+    @apply bg-[#020617] text-white antialiased;
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    overflow-x: hidden;
+  }
+  
+  /* Selection color */
+  ::selection {
+    background: rgba(0, 240, 255, 0.3);
+    color: white;
+  }
+}
+
+/* Typography Classes */
+.font-display {
+  font-family: 'Space Grotesk', 'Inter', sans-serif;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+}
+
+.font-mono {
+  font-family: 'JetBrains Mono', 'SF Mono', 'Monaco', monospace;
+}
+
+/* Text Glow Effects */
+.text-glow-cyan {
+  text-shadow: 
+    0 0 10px rgba(0, 240, 255, 0.5),
+    0 0 20px rgba(0, 240, 255, 0.3),
+    0 0 30px rgba(0, 240, 255, 0.2);
+}
+
+.text-glow-soft {
+  text-shadow: 
+    0 0 10px rgba(157, 196, 255, 0.4),
+    0 0 20px rgba(157, 196, 255, 0.2);
+}
+
+/* Glow Effects */
+.glow-cyan {
+  box-shadow: 
+    0 0 20px rgba(0, 240, 255, 0.3),
+    0 0 40px rgba(0, 240, 255, 0.2),
+    0 0 60px rgba(0, 240, 255, 0.1);
+}
+
+.glow-border-cyan {
+  box-shadow: 
+    0 0 0 1px rgba(0, 240, 255, 0.3),
+    0 0 20px rgba(0, 240, 255, 0.15);
+}
+
+/* Gradient Text */
+.gradient-text {
+  background: linear-gradient(135deg, #00F0FF 0%, #4D9FFF 50%, #9DC4FF 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* Neural Card Styles */
+.neural-card {
+  background: rgba(11, 15, 23, 0.72);
+  border: 1px solid rgba(242, 247, 255, 0.08);
+  border-radius: 22px;
+  box-shadow: 0 24px 80px rgba(0, 0, 0, 0.55);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+}
+
+.neural-card:hover {
+  border-color: rgba(0, 240, 255, 0.25);
+  box-shadow: 
+    0 24px 80px rgba(0, 0, 0, 0.55),
+    0 0 40px rgba(0, 240, 255, 0.12);
+}
+
+.neural-section-layer,
+.neural-section-layer-strong,
+.neural-section-layer-deep,
+.neural-footer-layer {
+  background: linear-gradient(
+    180deg,
+    rgba(2, 6, 23, 0.66) 0%,
+    rgba(6, 16, 34, 0.6) 50%,
+    rgba(2, 6, 23, 0.66) 100%
+  );
+  isolation: isolate;
+}
+
+.neural-anim-target {
+  will-change: transform, opacity;
+  transform: translateZ(0);
+  backface-visibility: hidden;
+}
+
+@media (max-width: 1024px) {
+  .neural-card {
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    box-shadow: 0 18px 56px rgba(0, 0, 0, 0.5);
+  }
+}
+
+/* Button Styles */
+.btn-neural {
+  @apply px-8 py-3 border border-cyan-400/50 text-cyan-400 font-mono text-sm uppercase tracking-wider rounded-full;
+  position: relative;
+  overflow: hidden;
+  transition: all 0.3s ease;
+}
+
+.btn-neural::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 240, 255, 0.1);
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 0.3s ease;
+}
+
+.btn-neural:hover {
+  border-color: #00F0FF;
+  color: white;
+}
+
+.btn-neural:hover::before {
+  transform: scaleX(1);
+}
+
+/* Scrollbar Styling */
+::-webkit-scrollbar {
+  width: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: #020617;
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(0, 240, 255, 0.2);
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(0, 240, 255, 0.4);
+}
+
+/* Animation Keyframes */
+@keyframes pulse-glow {
+  0%, 100% {
+    box-shadow: 0 0 20px rgba(0, 240, 255, 0.3);
+  }
+  50% {
+    box-shadow: 0 0 40px rgba(0, 240, 255, 0.5);
+  }
+}
+
+@keyframes float {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+}
+
+@keyframes orbit {
+  from {
+    transform: rotate(0deg) translateX(100px) rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg) translateX(100px) rotate(-360deg);
+  }
+}
+
+@keyframes scanline {
+  0% {
+    transform: translateY(-100%);
+  }
+  100% {
+    transform: translateY(100%);
+  }
+}
+
+@keyframes glitch {
+  0%, 100% {
+    transform: translate(0);
+  }
+  20% {
+    transform: translate(-2px, 2px);
+  }
+  40% {
+    transform: translate(-2px, -2px);
+  }
+  60% {
+    transform: translate(2px, 2px);
+  }
+  80% {
+    transform: translate(2px, -2px);
+  }
+}
+
+@keyframes neural-glitch-jitter {
+  0% {
+    transform: translate(0, 0);
+  }
+  20% {
+    transform: translate(-2px, 1px);
+  }
+  40% {
+    transform: translate(1.5px, -1px);
+  }
+  60% {
+    transform: translate(-1.5px, 1.5px);
+  }
+  80% {
+    transform: translate(1px, -1px);
+  }
+  100% {
+    transform: translate(0, 0);
+  }
+}
+
+@keyframes neural-text-glitch-shift {
+  0% {
+    transform: translate(0, 0);
+  }
+  30% {
+    transform: translate(-2px, 1px);
+  }
+  55% {
+    transform: translate(2px, -1px);
+  }
+  80% {
+    transform: translate(-1px, -1px);
+  }
+  100% {
+    transform: translate(0, 0);
+  }
+}
+
+@keyframes neural-glitch-scan {
+  0% {
+    opacity: 0;
+    transform: translateY(-20%);
+  }
+  25% {
+    opacity: 0.2;
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(120%);
+  }
+}
+
+/* Utility Animations */
+.animate-pulse-glow {
+  animation: pulse-glow 2s ease-in-out infinite;
+}
+
+.animate-float {
+  animation: float 3s ease-in-out infinite;
+}
+
+.animate-orbit {
+  animation: orbit 8s linear infinite;
+}
+
+.animate-scanline {
+  animation: scanline 3s linear infinite;
+}
+
+.animate-glitch {
+  animation: glitch 0.3s ease-in-out infinite;
+}
+
+.neural-glitch-active {
+  position: relative;
+}
+
+.neural-glitch-active canvas {
+  animation: neural-glitch-jitter 140ms steps(2, end) 1;
+  filter: saturate(1.08) contrast(1.04) hue-rotate(1deg);
+}
+
+.neural-glitch-active::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: linear-gradient(
+    180deg,
+    rgba(120, 245, 255, 0) 0%,
+    rgba(120, 245, 255, 0.12) 35%,
+    rgba(120, 245, 255, 0.08) 65%,
+    rgba(120, 245, 255, 0) 100%
+  );
+  mix-blend-mode: screen;
+  animation: neural-glitch-scan 180ms linear 1;
+}
+
+.neural-text-glitch-active {
+  position: relative;
+  display: inline-block;
+  text-shadow:
+    -1px 0 rgba(0, 240, 255, 0.72),
+    1px 0 rgba(255, 70, 130, 0.66);
+  animation: neural-text-glitch-shift 160ms steps(2, end) 1;
+}
+
+.neural-text-glitch-active::before,
+.neural-text-glitch-active::after {
+  content: attr(data-neural-glitch);
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+.neural-text-glitch-active::before {
+  color: rgba(0, 240, 255, 0.72);
+  transform: translate(-1px, 0);
+  clip-path: inset(0 0 45% 0);
+}
+
+.neural-text-glitch-active::after {
+  color: rgba(255, 120, 170, 0.58);
+  transform: translate(1px, 0);
+  clip-path: inset(45% 0 0 0);
+}
+
+/* Canvas Container */
+.canvas-container {
+  position: relative;
+  width: 100%;
+  height: 100%;
+}
+
+canvas {
+  display: block;
+}
+
+/* Section Backgrounds */
+.section-void {
+  background: linear-gradient(180deg, #020617 0%, #0A192F 50%, #020617 100%);
+}
+
+/* Navigation Pill */
+.nav-pill {
+  background: rgba(255, 255, 255, 0.08);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.nav-pill:hover {
+  background: rgba(255, 255, 255, 0.12);
+  border-color: rgba(0, 240, 255, 0.3);
+}
+
+/* Input Styles */
+input, textarea {
+  @apply bg-white/5 border border-white/10 rounded-xl text-white placeholder-white/30;
+  transition: border-color 0.3s ease;
+}
+
+input:focus, textarea:focus {
+  @apply border-cyan-400/50 outline-none;
+}
+
+/* Link Hover Effect */
+.link-hover {
+  position: relative;
+  display: inline-block;
+}
+
+.link-hover::after {
+  content: '';
+  position: absolute;
+  bottom: -2px;
+  left: 0;
+  width: 0;
+  height: 1px;
+  background: #00F0FF;
+  transition: width 0.3s ease;
+}
+
+.link-hover:hover::after {
+  width: 100%;
+}
+
+/* Noise Texture Overlay */
+.noise-overlay {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  opacity: 0.03;
+  mix-blend-mode: overlay;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+}
+
+/* Responsive Typography */
+@media (max-width: 768px) {
+  .font-display {
+    letter-spacing: -0.01em;
+  }
+}
+
+/* Reduced Motion */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* Pin Spacer Fix for GSAP */
+.pin-spacer {
+  pointer-events: none !important;
+}
+
+.pin-spacer > * {
+  pointer-events: auto !important;
+}
