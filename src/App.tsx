@@ -3,6 +3,7 @@ import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 
 import { ParticleField, NavigationDots } from './components/neural';
+import CustomCursor from './components/interactive/CustomCursor';
 import Hero from './sections/Hero';
 
 import { siteConfig } from './config';
@@ -192,6 +193,8 @@ function App() {
 
   return (
     <>
+      <CustomCursor />
+
       {/* Global Particle Background */}
       <div
         className={`fixed inset-0 z-0 pointer-events-none transition-opacity ${

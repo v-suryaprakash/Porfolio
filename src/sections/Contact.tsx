@@ -1,253 +1,282 @@
-import { useEffect, useRef, useState } from 'react';
-import { gsap } from 'gsap';
-import { ScrollTrigger } from 'gsap/ScrollTrigger';
-import { NeuralCard } from '../components/neural';
-import { Mail, Linkedin, Github, Send, ArrowRight } from 'lucide-react';
+import { useRef, useState } from 'react';
+import { motion, useReducedMotion, useScroll, useTransform } from 'framer-motion';
+import { ArrowUpRight, Github, Linkedin, Mail, Send } from 'lucide-react';
+import TypewriterText from '../components/interactive/TypewriterText';
 
-gsap.registerPlugin(ScrollTrigger);
+type ContactForm = {
+  name: string;
+  email: string;
+  message: string;
+};
+
+const socialLinks = [
+  {
+    label: 'GitHub',
+    href: 'https://github.com/v-suryaprakash',
+    icon: Github,
+    color: 'hover:text-cyan-200',
+  },
+  {
+    label: 'LinkedIn',
+    href: 'https://www.linkedin.com/in/v-suryaprakash',
+    icon: Linkedin,
+    color: 'hover:text-blue-200',
+  },
+  {
+    label: 'Mail',
+    href: 'mailto:surya@example.com',
+    icon: Mail,
+    color: 'hover:text-emerald-200',
+  },
+] as const;
 
 export default function Contact() {
   const sectionRef = useRef<HTMLElement>(null);
-  const leftCardRef = useRef<HTMLDivElement>(null);
-  const rightPanelRef = useRef<HTMLDivElement>(null);
-  const formRef = useRef<HTMLFormElement>(null);
+  const reduceMotion = useReducedMotion();
 
-  const [formData, setFormData] = useState({
+  const [formData, setFormData] = useState<ContactForm>({
     name: '',
     email: '',
     message: '',
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [submitted, setSubmitted] = useState(false);
+  const [isSubmitted, setIsSubmitted] = useState(false);
 
-  useEffect(() => {
-    const ctx = gsap.context(() => {
-      // Left card entrance
-      gsap.fromTo(
-        leftCardRef.current,
-        { x: '-60vw', opacity: 0 },
-        {
-          x: 0,
-          opacity: 1,
-          duration: 1,
-          ease: 'power3.out',
-          immediateRender: false,
-          scrollTrigger: {
-            trigger: sectionRef.current,
-            start: 'top 80%',
-            toggleActions: 'play none none reverse',
-          },
-        }
-      );
+  const { scrollYProgress } = useScroll({
+    target: sectionRef,
+    offset: ['start end', 'end start'],
+  });
 
-      // Right panel entrance
-      gsap.fromTo(
-        rightPanelRef.current,
-        { x: '60vw', opacity: 0 },
-        {
-          x: 0,
-          opacity: 1,
-          duration: 1,
-          ease: 'power3.out',
-          immediateRender: false,
-          scrollTrigger: {
-            trigger: sectionRef.current,
-            start: 'top 80%',
-            toggleActions: 'play none none reverse',
-          },
-        }
-      );
+  const blurCloudY = useTransform(scrollYProgress, [0, 1], [-70, 62]);
 
-      // Form fields entrance
-      gsap.fromTo(
-        formRef.current?.children || [],
-        { y: 14, opacity: 0 },
-        {
-          y: 0,
-          opacity: 1,
-          stagger: 0.08,
-          duration: 0.5,
-          ease: 'power2.out',
-          immediateRender: false,
-          scrollTrigger: {
-            trigger: sectionRef.current,
-            start: 'top 72%',
-            toggleActions: 'play none none reverse',
-          },
-        }
-      );
-
-    }, sectionRef);
-
-    return () => ctx.revert();
-  }, []);
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
+  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
     setIsSubmitting(true);
 
-    // Simulate form submission
-    await new Promise((resolve) => setTimeout(resolve, 1500));
+    await new Promise<void>((resolve) => {
+      window.setTimeout(() => resolve(), 1400);
+    });
 
     setIsSubmitting(false);
-    setSubmitted(true);
+    setIsSubmitted(true);
 
-    // Reset after showing success
-    setTimeout(() => {
-      setSubmitted(false);
+    window.setTimeout(() => {
+      setIsSubmitted(false);
       setFormData({ name: '', email: '', message: '' });
-    }, 3000);
+    }, 2800);
   };
-
-  const contactLinks = [
-    { icon: Mail, label: 'Email', value: 'surya@example.com', href: 'mailto:surya@example.com' },
-    { icon: Linkedin, label: 'LinkedIn', value: '/in/suryaprakash', href: 'https://linkedin.com' },
-    { icon: Github, label: 'GitHub', value: '@suryaprakash', href: 'https://github.com' },
-  ];
 
   return (
     <section
       ref={sectionRef}
       id="contact"
-      className="relative w-full h-screen overflow-hidden z-[60] neural-section-layer"
+      className="relative z-[60] w-full min-h-screen overflow-hidden py-24 neural-section-layer"
     >
-      <div className="relative z-10 w-full h-full flex items-center justify-center px-[8vw]">
-        {/* Left Contact Card */}
-        <div
-          ref={leftCardRef}
-          className="absolute neural-anim-target"
-          style={{ left: '8vw', top: '18vh', width: '40vw', height: '64vh' }}
-        >
-          <NeuralCard className="w-full h-full p-8 flex flex-col">
-            {/* Header */}
-            <div className="mb-8">
-              <p className="font-mono text-xs text-cyan-400/60 uppercase tracking-[0.2em] mb-2">
-                Signal Transmission
-              </p>
-              <h2 className="font-display text-4xl text-white mb-2">Send a Signal</h2>
-              <p className="text-white/60">
-                Open to collaborations, research, and hard problems.
+      <motion.div
+        aria-hidden="true"
+        className="pointer-events-none absolute -left-16 top-1/4 h-80 w-80 rounded-full bg-cyan-500/14 blur-3xl"
+        style={{ y: blurCloudY }}
+      />
+      <motion.div
+        aria-hidden="true"
+        className="pointer-events-none absolute right-0 top-12 h-[420px] w-[420px] rounded-full bg-blue-500/12 blur-3xl"
+        animate={
+          reduceMotion
+            ? undefined
+            : {
+                y: [-10, 28, -10],
+                x: [0, -16, 0],
+              }
+        }
+        transition={{ duration: 12, repeat: Infinity, ease: 'easeInOut' }}
+      />
+      <motion.div
+        aria-hidden="true"
+        className="pointer-events-none absolute bottom-6 left-1/3 h-64 w-64 rounded-full bg-emerald-400/10 blur-3xl"
+        animate={
+          reduceMotion
+            ? undefined
+            : {
+                y: [0, -20, 0],
+                scale: [1, 1.08, 1],
+              }
+        }
+        transition={{ duration: 10, repeat: Infinity, ease: 'easeInOut' }}
+      />
+
+      <div className="relative z-10 mx-auto w-full max-w-7xl px-6 lg:px-10">
+        <div className="grid gap-10 lg:grid-cols-[1.05fr_minmax(0,0.95fr)]">
+          <motion.div
+            initial={reduceMotion ? { opacity: 0 } : { opacity: 0, x: -45, filter: 'blur(8px)' }}
+            whileInView={{ opacity: 1, x: 0, filter: 'blur(0px)' }}
+            viewport={{ once: true, amount: 0.35 }}
+            transition={{ duration: 0.75, ease: [0.16, 1, 0.3, 1] }}
+            className="space-y-8"
+          >
+            <div>
+              <p className="font-mono text-xs uppercase tracking-[0.24em] text-cyan-300/70">Signal Room</p>
+              <h2 className="mt-3 font-display text-4xl text-white md:text-5xl">
+                <TypewriterText text="Let us build something remarkable." speed={40} startDelay={140} />
+              </h2>
+              <p className="mt-4 max-w-xl text-sm leading-relaxed text-white/70">
+                I am open to opportunities involving product engineering, applied AI, and interaction-rich frontend systems.
               </p>
             </div>
 
-            {/* Contact Links */}
-            <div className="flex-1 space-y-4">
-              {contactLinks.map((link) => (
-                <a
-                  key={link.label}
-                  href={link.href}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="flex items-center gap-4 p-4 rounded-xl bg-white/5 hover:bg-white/10 transition-colors group"
-                >
-                  <div className="w-10 h-10 rounded-lg bg-cyan-400/10 flex items-center justify-center group-hover:bg-cyan-400/20 transition-colors">
-                    <link.icon className="w-5 h-5 text-cyan-400" />
-                  </div>
-                  <div className="flex-1">
-                    <p className="font-mono text-xs text-white/40">{link.label}</p>
-                    <p className="text-white group-hover:text-cyan-400 transition-colors">{link.value}</p>
-                  </div>
-                  <ArrowRight className="w-4 h-4 text-white/30 group-hover:text-cyan-400 group-hover:translate-x-1 transition-all" />
-                </a>
-              ))}
-            </div>
-
-            {/* Status indicator */}
-            <div className="mt-6 pt-6 border-t border-white/10 flex items-center justify-between">
+            <div className="rounded-2xl border border-white/12 bg-[#071224]/80 p-4">
               <div className="flex items-center gap-2">
-                <span className="w-2 h-2 bg-green-400 rounded-full animate-pulse" />
-                <span className="font-mono text-xs text-white/60">Available for new projects</span>
+                <span className="relative inline-flex h-2.5 w-2.5">
+                  <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-300/70" />
+                  <span className="relative inline-flex h-2.5 w-2.5 rounded-full bg-emerald-300" />
+                </span>
+                <p className="font-mono text-[11px] uppercase tracking-[0.2em] text-emerald-100/85">Open To Opportunities</p>
               </div>
-              <span className="font-mono text-xs text-cyan-400/60">Response time: ~24h</span>
+              <p className="mt-2 text-sm text-white/66">Preferred response window: within 24 hours for collaboration discussions.</p>
             </div>
-          </NeuralCard>
-        </div>
 
-        {/* Right Form Panel */}
-        <div
-          ref={rightPanelRef}
-          className="absolute neural-anim-target"
-          style={{ left: '52vw', top: '18vh', width: '40vw', height: '64vh' }}
-        >
-          <NeuralCard className="w-full h-full p-8">
-            {submitted ? (
-              <div className="h-full flex flex-col items-center justify-center text-center">
-                <div className="w-16 h-16 rounded-full bg-cyan-400/20 flex items-center justify-center mb-4">
-                  <Send className="w-8 h-8 text-cyan-400" />
+            <div className="grid gap-3 sm:grid-cols-3">
+              {socialLinks.map((social, index) => {
+                const SocialIcon = social.icon;
+
+                return (
+                  <motion.a
+                    key={social.label}
+                    href={social.href}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className={`group relative flex min-h-[112px] flex-col justify-between rounded-2xl border border-white/12 bg-[#071224]/72 p-4 text-white/75 transition-colors ${social.color}`}
+                    whileHover={reduceMotion ? undefined : { y: -5, rotate: index === 1 ? 1.5 : -1.5, scale: 1.02 }}
+                    whileTap={{ scale: 0.97 }}
+                    data-cursor-label={`Open ${social.label}`}
+                  >
+                    <SocialIcon className="h-7 w-7 transition-transform duration-300 group-hover:rotate-6 group-hover:scale-110" />
+                    <div className="inline-flex items-center justify-between text-xs font-mono uppercase tracking-[0.16em]">
+                      <span>{social.label}</span>
+                      <ArrowUpRight className="h-3.5 w-3.5 transition-transform duration-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
+                    </div>
+                  </motion.a>
+                );
+              })}
+            </div>
+          </motion.div>
+
+          <motion.div
+            initial={reduceMotion ? { opacity: 0 } : { opacity: 0, x: 45, scale: 0.96 }}
+            whileInView={{ opacity: 1, x: 0, scale: 1 }}
+            viewport={{ once: true, amount: 0.35 }}
+            transition={{ duration: 0.78, ease: [0.16, 1, 0.3, 1] }}
+            className="rounded-[28px] border border-white/12 bg-[#06101f]/84 p-6 shadow-[0_26px_85px_rgba(0,0,0,0.52)] backdrop-blur-xl md:p-7"
+          >
+            <div className="pointer-events-none mb-5 h-[2px] w-full bg-gradient-to-r from-transparent via-cyan-200/80 to-transparent" />
+
+            {isSubmitted ? (
+              <motion.div
+                className="flex min-h-[360px] flex-col items-center justify-center text-center"
+                initial={{ opacity: 0, scale: 0.92 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ duration: 0.35 }}
+              >
+                <div className="mb-4 flex h-16 w-16 items-center justify-center rounded-full border border-cyan-200/35 bg-cyan-200/10">
+                  <Send className="h-7 w-7 text-cyan-200" />
                 </div>
-                <h3 className="font-display text-2xl text-white mb-2">Signal Transmitted</h3>
-                <p className="text-white/60">Thank you for reaching out. I&apos;ll get back to you soon.</p>
-              </div>
+                <h3 className="font-display text-2xl text-white">Signal Delivered</h3>
+                <p className="mt-2 max-w-sm text-sm text-white/66">
+                  Thank you for reaching out. I will review your message and reply soon.
+                </p>
+              </motion.div>
             ) : (
-              <form ref={formRef} onSubmit={handleSubmit} className="h-full flex flex-col">
-                <div className="mb-6">
-                  <p className="font-mono text-xs text-cyan-400/60 uppercase tracking-[0.2em] mb-2">
-                    Compose Message
-                  </p>
-                </div>
+              <motion.form
+                onSubmit={handleSubmit}
+                className="space-y-4"
+                initial="hidden"
+                whileInView="visible"
+                viewport={{ once: true, amount: 0.55 }}
+                variants={{
+                  hidden: { opacity: 0 },
+                  visible: {
+                    opacity: 1,
+                    transition: {
+                      staggerChildren: reduceMotion ? 0 : 0.1,
+                      delayChildren: 0.06,
+                    },
+                  },
+                }}
+              >
+                <motion.div
+                  variants={{
+                    hidden: { opacity: 0, y: 16 },
+                    visible: { opacity: 1, y: 0 },
+                  }}
+                >
+                  <label className="mb-2 block font-mono text-[11px] uppercase tracking-[0.16em] text-white/55">Name</label>
+                  <input
+                    type="text"
+                    value={formData.name}
+                    onChange={(event) => setFormData((prev) => ({ ...prev, name: event.target.value }))}
+                    className="w-full rounded-xl border border-white/12 bg-[#091428]/86 px-4 py-3 text-sm text-white outline-none transition-colors duration-300 focus:border-cyan-200/50"
+                    placeholder="Your name"
+                    required
+                  />
+                </motion.div>
 
-                <div className="flex-1 space-y-4">
-                  {/* Name Field */}
-                  <div>
-                    <label className="block font-mono text-xs text-white/40 mb-2">NAME</label>
-                    <input
-                      type="text"
-                      value={formData.name}
-                      onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                      required
-                      className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl text-white placeholder-white/30 focus:border-cyan-400/50 focus:outline-none transition-colors"
-                      placeholder="Your name"
-                    />
-                  </div>
+                <motion.div
+                  variants={{
+                    hidden: { opacity: 0, y: 16 },
+                    visible: { opacity: 1, y: 0 },
+                  }}
+                >
+                  <label className="mb-2 block font-mono text-[11px] uppercase tracking-[0.16em] text-white/55">Email</label>
+                  <input
+                    type="email"
+                    value={formData.email}
+                    onChange={(event) => setFormData((prev) => ({ ...prev, email: event.target.value }))}
+                    className="w-full rounded-xl border border-white/12 bg-[#091428]/86 px-4 py-3 text-sm text-white outline-none transition-colors duration-300 focus:border-cyan-200/50"
+                    placeholder="you@example.com"
+                    required
+                  />
+                </motion.div>
 
-                  {/* Email Field */}
-                  <div>
-                    <label className="block font-mono text-xs text-white/40 mb-2">EMAIL</label>
-                    <input
-                      type="email"
-                      value={formData.email}
-                      onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                      required
-                      className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl text-white placeholder-white/30 focus:border-cyan-400/50 focus:outline-none transition-colors"
-                      placeholder="your@email.com"
-                    />
-                  </div>
+                <motion.div
+                  variants={{
+                    hidden: { opacity: 0, y: 16 },
+                    visible: { opacity: 1, y: 0 },
+                  }}
+                >
+                  <label className="mb-2 block font-mono text-[11px] uppercase tracking-[0.16em] text-white/55">Message</label>
+                  <textarea
+                    value={formData.message}
+                    onChange={(event) => setFormData((prev) => ({ ...prev, message: event.target.value }))}
+                    className="h-40 w-full resize-none rounded-xl border border-white/12 bg-[#091428]/86 px-4 py-3 text-sm text-white outline-none transition-colors duration-300 focus:border-cyan-200/50"
+                    placeholder="Tell me what you want to build..."
+                    required
+                  />
+                </motion.div>
 
-                  {/* Message Field */}
-                  <div className="flex-1">
-                    <label className="block font-mono text-xs text-white/40 mb-2">MESSAGE</label>
-                    <textarea
-                      value={formData.message}
-                      onChange={(e) => setFormData({ ...formData, message: e.target.value })}
-                      required
-                      rows={4}
-                      className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl text-white placeholder-white/30 focus:border-cyan-400/50 focus:outline-none transition-colors resize-none"
-                      placeholder="Tell me about your project..."
-                    />
-                  </div>
-                </div>
-
-                {/* Submit Button */}
-                <button
+                <motion.button
                   type="submit"
+                  className="group inline-flex w-full items-center justify-center gap-2 rounded-xl border border-cyan-200/35 bg-cyan-200/10 px-4 py-3 font-mono text-xs uppercase tracking-[0.16em] text-cyan-100 transition-colors duration-300 hover:bg-cyan-200/20 disabled:cursor-not-allowed disabled:opacity-65"
                   disabled={isSubmitting}
-                  className="mt-6 w-full py-4 bg-cyan-400/10 border border-cyan-400/50 text-cyan-400 font-mono text-sm uppercase tracking-wider rounded-xl hover:bg-cyan-400/20 transition-colors flex items-center justify-center gap-2 disabled:opacity-50"
+                  data-cursor-label="Send message"
+                  variants={{
+                    hidden: { opacity: 0, y: 16 },
+                    visible: { opacity: 1, y: 0 },
+                  }}
                 >
                   {isSubmitting ? (
                     <>
-                      <span className="w-4 h-4 border-2 border-cyan-400/30 border-t-cyan-400 rounded-full animate-spin" />
-                      Transmitting...
+                      <span className="h-4 w-4 animate-spin rounded-full border-2 border-cyan-100/35 border-t-cyan-100" />
+                      Sending
                     </>
                   ) : (
                     <>
-                      <Send className="w-4 h-4" />
-                      Transmit Message
+                      <Send className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-0.5" />
+                      Send Signal
                     </>
                   )}
-                </button>
-              </form>
+                </motion.button>
+              </motion.form>
             )}
-          </NeuralCard>
+          </motion.div>
         </div>
       </div>
     </section>

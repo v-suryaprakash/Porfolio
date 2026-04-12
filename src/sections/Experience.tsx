@@ -1,203 +1,209 @@
-import { useEffect, useRef } from 'react';
-import { gsap } from 'gsap';
-import { ScrollTrigger } from 'gsap/ScrollTrigger';
-import { NeuralCard } from '../components/neural';
-import { Briefcase, GraduationCap, Award } from 'lucide-react';
+import { useRef } from 'react';
+import { motion, useReducedMotion, useScroll, useSpring, useTransform } from 'framer-motion';
+import { Award, BriefcaseBusiness, GraduationCap, Sparkles } from 'lucide-react';
 
-gsap.registerPlugin(ScrollTrigger);
+type TimelineEntry = {
+  year: string;
+  role: string;
+  organization: string;
+  type: 'Build' | 'Engineering' | 'Education' | 'Recognition';
+  badge: string;
+  summary: string;
+  bullets: string[];
+};
 
-const experiences = [
+const timelineEntries: TimelineEntry[] = [
   {
-    id: 1,
-    type: 'work',
-    icon: Briefcase,
-    period: '2022 — Present',
-    role: 'Staff AI Engineer',
-    company: 'CoreSystems',
-    description: [
-      'Leading model serving infrastructure; reduced p99 latency by 40%',
-      'Architected distributed training pipeline handling 10M+ samples/day',
-      'Mentoring team of 8 engineers on MLOps best practices',
+    year: '2026',
+    role: 'Founder Engineer',
+    organization: 'RareLink',
+    type: 'Build',
+    badge: 'RL',
+    summary:
+      'Designed a privacy-first collaboration platform connecting patients, researchers, and specialists under a consent-centric architecture.',
+    bullets: [
+      'Built synchronized patient-researcher-specialist workflows',
+      'Shaped gateway-driven API architecture for cross-portal consistency',
+      'Focused on trust, data control, and operational clarity',
     ],
   },
   {
-    id: 2,
-    type: 'work',
-    icon: Briefcase,
-    period: '2019 — 2022',
-    role: 'Senior ML Engineer',
-    company: 'DataFlow Labs',
-    description: [
-      'Shipped forecasting pipelines used by 3 enterprise clients',
-      'Built real-time anomaly detection reducing false positives by 60%',
-      'Published 3 papers on time-series forecasting at top conferences',
+    year: '2026',
+    role: 'Security Framework Developer',
+    organization: 'Ghost Layer',
+    type: 'Engineering',
+    badge: 'GL',
+    summary:
+      'Developed a modular steganographic framework for secure payload hiding across image, audio, GIF, and text carriers.',
+    bullets: [
+      'Implemented layered serializer and protocol design',
+      'Engineered deterministic reveal flows for payload integrity',
+      'Maintained extensible architecture for future carrier engines',
     ],
   },
   {
-    id: 3,
-    type: 'work',
-    icon: Briefcase,
-    period: '2017 — 2019',
-    role: 'Software Engineer',
-    company: 'CloudScale',
-    description: [
-      'Built distributed task queues processing 1M+ jobs/day',
-      'Designed monitoring dashboards used by 50+ engineers',
-      'Contributed to open-source Kubernetes operators',
+    year: '2025',
+    role: 'Product Co-Builder',
+    organization: 'PoC - Proof of Consent',
+    type: 'Build',
+    badge: 'PC',
+    summary:
+      'Co-created a healthcare consent platform combining AI simplification and blockchain verification to improve patient understanding.',
+    bullets: [
+      'Mapped doctor and patient flows for transparent consent journeys',
+      'Integrated AI explanation pathways and quiz-based comprehension',
+      'Linked consent integrity with blockchain-backed records',
     ],
   },
   {
-    id: 4,
-    type: 'education',
-    icon: GraduationCap,
-    period: '2015 — 2017',
-    role: 'M.S. Computer Science',
-    company: 'Indian Institute of Technology',
-    description: [
-      'Specialization in Machine Learning and Distributed Systems',
-      'Thesis: "Scalable Deep Learning for Edge Devices"',
-      'GPA: 9.2/10',
+    year: 'Now',
+    role: 'B.Tech AI and Data Science',
+    organization: 'Anna University',
+    type: 'Education',
+    badge: 'AU',
+    summary:
+      'Pursuing formal AI and data systems training while shipping real-world products in public repositories.',
+    bullets: [
+      'Balancing academic depth with iterative product execution',
+      'Applying course concepts directly into production prototypes',
+      'Building a practical, systems-first engineering mindset',
     ],
   },
   {
-    id: 5,
-    type: 'award',
-    icon: Award,
-    period: '2023',
-    role: 'Best AI Innovation Award',
-    company: 'Tech Summit India',
-    description: [
-      'Recognized for predictive maintenance system reducing industrial downtime',
-      'Featured in TechCrunch and Analytics India Magazine',
+    year: '2026',
+    role: 'Consistent Open Source Contributor',
+    organization: 'GitHub Activity',
+    type: 'Recognition',
+    badge: 'GH',
+    summary:
+      'Sustained active contribution rhythm across RareLink, Ghost Layer, and portfolio evolution with visible iteration velocity.',
+    bullets: [
+      '37 contributions in the last year on the public profile',
+      'Frequent project refinement and architecture cleanup passes',
+      'Continuous documentation and implementation polishing',
     ],
   },
 ];
 
+const typeIconMap = {
+  Build: BriefcaseBusiness,
+  Engineering: Sparkles,
+  Education: GraduationCap,
+  Recognition: Award,
+};
+
 export default function Experience() {
   const sectionRef = useRef<HTMLElement>(null);
-  const lineRef = useRef<HTMLDivElement>(null);
-  const entriesRef = useRef<(HTMLDivElement | null)[]>([]);
+  const reduceMotion = useReducedMotion();
 
-  useEffect(() => {
-    const ctx = gsap.context(() => {
-      // Timeline line animation
-      gsap.fromTo(
-        lineRef.current,
-        { scaleY: 0 },
-        {
-          scaleY: 1,
-          ease: 'none',
-          scrollTrigger: {
-            trigger: sectionRef.current,
-            start: 'top 80%',
-            end: 'bottom 20%',
-            scrub: 0.5,
-          },
-        }
-      );
+  const { scrollYProgress } = useScroll({
+    target: sectionRef,
+    offset: ['start 70%', 'end 20%'],
+  });
 
-      // Entry cards animation
-      entriesRef.current.forEach((entry, index) => {
-        if (!entry) return;
+  const lineProgress = useSpring(scrollYProgress, {
+    stiffness: 120,
+    damping: 26,
+    mass: 0.4,
+  });
 
-        const isLeft = index % 2 === 0;
-
-        gsap.fromTo(
-          entry,
-          {
-            y: 40,
-            opacity: 0,
-            rotateZ: isLeft ? -1.5 : 1.5,
-          },
-          {
-            y: 0,
-            opacity: 1,
-            rotateZ: 0,
-            duration: 0.8,
-            ease: 'power3.out',
-            scrollTrigger: {
-              trigger: entry,
-              start: 'top 80%',
-              toggleActions: 'play none none reverse',
-            },
-          }
-        );
-      });
-    }, sectionRef);
-
-    return () => ctx.revert();
-  }, []);
+  const ambientY = useTransform(scrollYProgress, [0, 1], [60, -70]);
 
   return (
     <section
       ref={sectionRef}
       id="experience"
-      className="relative w-full min-h-screen py-24 z-50 neural-section-layer-deep"
+      className="relative z-50 w-full min-h-screen overflow-hidden py-24 neural-section-layer-deep"
     >
-      <div className="relative z-10 max-w-6xl mx-auto px-8">
-        {/* Title */}
-        <div className="text-center mb-16">
-          <p className="font-mono text-xs text-cyan-400/60 uppercase tracking-[0.2em] mb-2">
-            Timeline Stream
-          </p>
-          <h2 className="font-display text-4xl md:text-5xl text-white mb-2">
-            Experience
-          </h2>
-          <p className="font-mono text-sm text-white/50">
-            Journey through the neural network of my career
-          </p>
-        </div>
+      <motion.div
+        aria-hidden="true"
+        className="pointer-events-none absolute -left-20 top-1/3 h-80 w-80 rounded-full bg-cyan-500/10 blur-3xl"
+        style={{ y: ambientY }}
+      />
 
-        {/* Timeline */}
-        <div className="relative">
-          {/* Center line */}
-          <div
-            ref={lineRef}
-            className="absolute left-1/2 top-0 bottom-0 w-0.5 -translate-x-1/2 origin-top"
-            style={{
-              background: 'linear-gradient(180deg, transparent 0%, rgba(0, 240, 255, 0.4) 10%, rgba(0, 240, 255, 0.4) 90%, transparent 100%)',
-            }}
-          />
+      <div className="relative z-10 mx-auto w-full max-w-6xl px-6 lg:px-10">
+        <motion.div
+          initial={reduceMotion ? { opacity: 0 } : { opacity: 0, y: 34 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, amount: 0.35 }}
+          transition={{ duration: 0.72, ease: [0.16, 1, 0.3, 1] }}
+          className="text-center"
+        >
+          <p className="font-mono text-xs uppercase tracking-[0.24em] text-cyan-300/70">Experience Journal</p>
+          <h2 className="mt-3 font-display text-4xl text-white md:text-5xl">Editorial Timeline</h2>
+          <p className="mx-auto mt-3 max-w-3xl text-sm leading-relaxed text-white/65">
+            A magazine-style journey of projects, learning, and contributions, arranged as chapters with visual anchors.
+          </p>
+        </motion.div>
 
-          {/* Entries */}
-          <div className="space-y-12">
-            {experiences.map((exp, index) => {
+        <div className="relative mt-16">
+          <div className="absolute bottom-0 left-1/2 top-0 hidden w-px -translate-x-1/2 lg:block">
+            <div className="absolute inset-0 bg-white/12" />
+            <motion.div
+              className="absolute inset-0 origin-top bg-gradient-to-b from-cyan-300/95 via-cyan-300/65 to-cyan-300/15"
+              style={{ scaleY: lineProgress }}
+            />
+          </div>
+
+          <div className="space-y-16 lg:space-y-20">
+            {timelineEntries.map((entry, index) => {
               const isLeft = index % 2 === 0;
+              const EntryIcon = typeIconMap[entry.type];
 
               return (
-                <div
-                  key={exp.id}
-                  ref={(el) => { entriesRef.current[index] = el; }}
-                  className={`relative flex items-center neural-anim-target ${isLeft ? 'justify-start' : 'justify-end'}`}
+                <motion.article
+                  key={`${entry.organization}-${entry.role}`}
+                  className="relative grid items-start gap-6 lg:grid-cols-2"
+                  initial={
+                    reduceMotion
+                      ? { opacity: 0 }
+                      : { opacity: 0, x: isLeft ? -90 : 90, rotateY: isLeft ? 12 : -12 }
+                  }
+                  whileInView={{ opacity: 1, x: 0, rotateY: 0 }}
+                  viewport={{ once: true, amount: 0.35 }}
+                  transition={{ duration: 0.62, ease: [0.16, 1, 0.3, 1] }}
                 >
-                  {/* Card */}
-                  <div className={`w-[45%] ${isLeft ? 'pr-8' : 'pl-8'}`}>
-                    <NeuralCard className="p-6">
-                      {/* Period */}
-                      <div className="flex items-center gap-2 mb-3">
-                        <exp.icon className="w-4 h-4 text-cyan-400" />
-                        <span className="font-mono text-xs text-cyan-400/60">{exp.period}</span>
+                  <div className={isLeft ? 'lg:pr-14' : 'lg:col-start-2 lg:pl-14'}>
+                    <div className="group relative overflow-hidden rounded-[26px] border border-white/12 bg-[#071224]/85 p-6 shadow-[0_20px_60px_rgba(0,0,0,0.45)]">
+                      <p className="pointer-events-none absolute right-3 top-1 font-display text-7xl text-white/[0.04] md:text-8xl">
+                        {entry.year}
+                      </p>
+
+                      <div className="relative z-10">
+                        <div className="flex items-center justify-between gap-3">
+                          <span className="inline-flex items-center gap-2 rounded-full border border-cyan-200/30 bg-cyan-200/10 px-3 py-1 font-mono text-[10px] uppercase tracking-[0.18em] text-cyan-100/90">
+                            <EntryIcon className="h-3.5 w-3.5" />
+                            {entry.type}
+                          </span>
+                          <span className="font-mono text-[11px] uppercase tracking-[0.2em] text-white/45">{entry.year}</span>
+                        </div>
+
+                        <h3 className="mt-4 font-display text-2xl text-white">{entry.role}</h3>
+                        <p className="font-mono text-xs uppercase tracking-[0.16em] text-cyan-200/75">{entry.organization}</p>
+
+                        <p className="mt-4 text-sm leading-relaxed text-white/72">{entry.summary}</p>
+
+                        <ul className="mt-5 space-y-2">
+                          {entry.bullets.map((bullet) => (
+                            <li key={bullet} className="flex items-start gap-2 text-sm text-white/66">
+                              <span className="mt-1.5 inline-block h-1.5 w-1.5 rounded-full bg-cyan-300/80" />
+                              <span>{bullet}</span>
+                            </li>
+                          ))}
+                        </ul>
                       </div>
-
-                      {/* Role & Company */}
-                      <h3 className="font-display text-xl text-white mb-1">{exp.role}</h3>
-                      <p className="font-mono text-sm text-white/60 mb-4">{exp.company}</p>
-
-                      {/* Description */}
-                      <ul className="space-y-2">
-                        {exp.description.map((item, i) => (
-                          <li key={i} className="text-sm text-white/70 flex items-start gap-2">
-                            <span className="w-1 h-1 bg-cyan-400 rounded-full mt-2 flex-shrink-0" />
-                            {item}
-                          </li>
-                        ))}
-                      </ul>
-                    </NeuralCard>
+                    </div>
                   </div>
 
-                  {/* Timeline node */}
-                  <div className="absolute left-1/2 -translate-x-1/2 w-4 h-4 rounded-full bg-cyan-400 border-4 border-[#0A192F] shadow-[0_0_10px_rgba(0,240,255,0.8)]" />
-                </div>
+                  <div className="pointer-events-none absolute left-1/2 top-8 hidden -translate-x-1/2 lg:block">
+                    <div className="group/anchor pointer-events-auto relative flex h-12 w-12 items-center justify-center rounded-full border border-cyan-200/45 bg-[#051224] shadow-[0_0_18px_rgba(0,240,255,0.45)]">
+                      <span className="font-mono text-xs uppercase tracking-[0.16em] text-cyan-100">{entry.badge}</span>
+                      <div className="absolute left-1/2 top-14 w-max -translate-x-1/2 rounded-lg border border-white/12 bg-[#071224]/95 px-3 py-2 text-[11px] text-white/75 opacity-0 transition-opacity duration-250 group-hover/anchor:opacity-100">
+                        {entry.organization}
+                      </div>
+                    </div>
+                  </div>
+                </motion.article>
               );
             })}
           </div>

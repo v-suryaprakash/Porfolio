@@ -1,228 +1,320 @@
-import { useEffect, useMemo, useRef } from 'react';
-import { gsap } from 'gsap';
-import { ScrollTrigger } from 'gsap/ScrollTrigger';
-import { NeuralCard } from '../components/neural';
-import { ArrowRight, Brain, Code, Database } from 'lucide-react';
+import { useEffect, useRef, useState } from 'react';
+import {
+  AnimatePresence,
+  motion,
+  useInView,
+  useReducedMotion,
+  useScroll,
+  useTransform,
+} from 'framer-motion';
+import { Activity, ArrowRight, Binary, GitBranch, Sparkles } from 'lucide-react';
 
-gsap.registerPlugin(ScrollTrigger);
+interface StoryChapter {
+  id: string;
+  title: string;
+  period: string;
+  summary: string;
+  highlights: string[];
+}
 
-const stats = [
-  { value: '7+', label: 'Years', icon: Brain },
-  { value: '40+', label: 'Projects', icon: Code },
-  { value: '12', label: 'Publications', icon: Database },
+interface Metric {
+  label: string;
+  target: number;
+  suffix?: string;
+}
+
+const storyChapters: StoryChapter[] = [
+  {
+    id: '01',
+    title: 'Origin Layer',
+    period: 'Present',
+    summary:
+      'I am currently pursuing B.Tech in Artificial Intelligence and Data Science at Anna University while building production-minded software in public.',
+    highlights: [
+      'Profile focus: applied AI, systems design, and engineering craft',
+      'Build style: fast prototypes with strict refactor discipline',
+      'Location context: India-based, collaborating across time zones',
+    ],
+  },
+  {
+    id: '02',
+    title: 'Proof Of Consent',
+    period: '2025 - 2026',
+    summary:
+      'PoC is a medical consent platform that combines AI explanation and blockchain verification, designed to help patients truly understand what they are signing.',
+    highlights: [
+      'AI-generated consent explanations in patient-friendly language',
+      'Consent integrity secured through Ethereum record anchoring',
+      'Doctor and patient experiences designed for trust and clarity',
+    ],
+  },
+  {
+    id: '03',
+    title: 'RareLink',
+    period: '2026',
+    summary:
+      'RareLink is a privacy-first, multi-portal ecosystem linking patients, researchers, and specialists into a single consent-aware workflow for rare disease collaboration.',
+    highlights: [
+      'Unified orchestration between patient, researcher, and specialist portals',
+      'Consent lifecycle synchronization across service boundaries',
+      'Cohort intelligence workflows to accelerate trial discovery',
+    ],
+  },
+  {
+    id: '04',
+    title: 'Ghost Layer',
+    period: '2026',
+    summary:
+      'Ghost Layer is a multi-carrier steganographic framework focused on modular architecture, payload integrity, and covert transport across image, audio, GIF, and text carriers.',
+    highlights: [
+      'Custom header protocol for deterministic payload extraction',
+      'Separate serializer, integrity, engine, and orchestration layers',
+      'Research-first architecture tuned for extensibility and security',
+    ],
+  },
 ];
+
+const metrics: Metric[] = [
+  { label: 'Contributions Last Year', target: 37, suffix: '+' },
+  { label: 'Public Repositories', target: 4 },
+  { label: 'Flagship Builds', target: 3 },
+];
+
+const currentSignals = [
+  'Deepening RareLink cross-portal consistency checks',
+  'Refining Ghost Layer payload reliability constraints',
+  'Pushing portfolio interactions toward crafted micro-details',
+];
+
+function CounterMetric({
+  label,
+  target,
+  suffix,
+  inView,
+  delay,
+}: Metric & { inView: boolean; delay: number }) {
+  const reduceMotion = useReducedMotion();
+  const [count, setCount] = useState(0);
+
+  useEffect(() => {
+    if (!inView) return;
+
+    if (reduceMotion) {
+      setCount(target);
+      return;
+    }
+
+    let rafId = 0;
+    const duration = 1250;
+    const start = performance.now() + delay;
+
+    const tick = (now: number) => {
+      if (now < start) {
+        rafId = window.requestAnimationFrame(tick);
+        return;
+      }
+
+      const progress = Math.min(1, (now - start) / duration);
+      const eased = 1 - Math.pow(1 - progress, 3);
+      setCount(Math.round(target * eased));
+
+      if (progress < 1) {
+        rafId = window.requestAnimationFrame(tick);
+      }
+    };
+
+    rafId = window.requestAnimationFrame(tick);
+
+    return () => {
+      if (rafId) {
+        window.cancelAnimationFrame(rafId);
+      }
+    };
+  }, [delay, inView, reduceMotion, target]);
+
+  return (
+    <motion.div
+      className="relative overflow-hidden rounded-2xl border border-white/10 bg-[#0a1323]/70 p-5"
+      initial={{ y: 28, opacity: 0 }}
+      whileInView={{ y: 0, opacity: 1 }}
+      viewport={{ once: true, amount: 0.6 }}
+      transition={{ duration: 0.55, ease: [0.22, 1, 0.36, 1], delay: delay / 1000 }}
+    >
+      <div className="pointer-events-none absolute inset-x-0 top-0 h-[2px] bg-gradient-to-r from-transparent via-cyan-300/80 to-transparent" />
+      <p className="font-display text-4xl text-white">
+        {count}
+        {suffix ?? ''}
+      </p>
+      <p className="mt-2 font-mono text-[11px] uppercase tracking-[0.18em] text-white/50">{label}</p>
+    </motion.div>
+  );
+}
 
 export default function About() {
   const sectionRef = useRef<HTMLElement>(null);
-  const portraitRef = useRef<HTMLDivElement>(null);
-  const panelRef = useRef<HTMLDivElement>(null);
-  const statsRef = useRef<HTMLDivElement>(null);
-  const neuralNodes = useMemo(
-    () =>
-      Array.from({ length: 30 }, (_, index) => ({
-        id: index,
-        cx: 150 + Math.sin(index * 0.5) * 80 + Math.random() * 40,
-        cy: 100 + index * 15 + Math.random() * 20,
-        r: 2 + Math.random() * 3,
-        delay: index * 0.1,
-      })),
-    []
-  );
+  const [activeChapterIndex, setActiveChapterIndex] = useState(0);
 
-  const neuralLinks = useMemo(
-    () =>
-      Array.from({ length: 25 }, (_, index) => ({
-        id: index,
-        x1: 150 + Math.sin(index * 0.5) * 80,
-        y1: 100 + index * 15,
-        x2: 150 + Math.sin((index + 1) * 0.5) * 80,
-        y2: 100 + (index + 1) * 15,
-      })),
-    []
-  );
+  const inView = useInView(sectionRef, { once: true, amount: 0.35 });
+  const reduceMotion = useReducedMotion();
 
-  useEffect(() => {
-    const ctx = gsap.context(() => {
-      // Portrait card entrance
-      gsap.fromTo(
-        portraitRef.current,
-        { x: '-55vw', opacity: 0, rotateY: 18 },
-        {
-          x: 0,
-          opacity: 1,
-          rotateY: 0,
-          duration: 1,
-          ease: 'power3.out',
-          immediateRender: false,
-          scrollTrigger: {
-            trigger: sectionRef.current,
-            start: 'top 80%',
-            toggleActions: 'play none none reverse',
-          },
-        }
-      );
+  const { scrollYProgress } = useScroll({
+    target: sectionRef,
+    offset: ['start end', 'end start'],
+  });
 
-      // Info panel entrance
-      gsap.fromTo(
-        panelRef.current,
-        { x: '55vw', opacity: 0, rotateY: -18 },
-        {
-          x: 0,
-          opacity: 1,
-          rotateY: 0,
-          duration: 1,
-          ease: 'power3.out',
-          immediateRender: false,
-          scrollTrigger: {
-            trigger: sectionRef.current,
-            start: 'top 80%',
-            toggleActions: 'play none none reverse',
-          },
-        }
-      );
+  const orbOneY = useTransform(scrollYProgress, [0, 1], [-80, 80]);
+  const orbTwoY = useTransform(scrollYProgress, [0, 1], [70, -55]);
 
-      // Stats entrance
-      gsap.fromTo(
-        statsRef.current?.children || [],
-        { y: 18, opacity: 0 },
-        {
-          y: 0,
-          opacity: 1,
-          stagger: 0.06,
-          duration: 0.5,
-          ease: 'power2.out',
-          immediateRender: false,
-          scrollTrigger: {
-            trigger: sectionRef.current,
-            start: 'top 72%',
-            toggleActions: 'play none none reverse',
-          },
-        }
-      );
-
-    }, sectionRef);
-
-    return () => ctx.revert();
-  }, []);
+  const activeChapter = storyChapters[activeChapterIndex];
 
   return (
     <section
       ref={sectionRef}
       id="about"
-      className="relative w-full h-screen overflow-hidden z-20 neural-section-layer-strong"
+      className="relative z-20 w-full min-h-screen overflow-hidden py-20 neural-section-layer-strong"
     >
-      <div className="relative z-10 w-full h-full flex items-center justify-center px-[8vw]">
-        {/* Portrait Card */}
-        <div
-          ref={portraitRef}
-          className="absolute neural-anim-target"
-          style={{ left: '8vw', top: '18vh', width: '34vw', height: '64vh' }}
-        >
-          <NeuralCard className="w-full h-full p-0">
-            <div className="relative w-full h-full overflow-hidden">
-              {/* Neural silhouette visualization */}
-              <div className="absolute inset-0 bg-gradient-to-b from-cyan-900/20 to-blue-900/40">
-                {/* Neural network pattern overlay */}
-                <div className="absolute inset-0 opacity-30">
-                  <svg className="w-full h-full" viewBox="0 0 400 600" preserveAspectRatio="xMidYMid slice">
-                    {/* Neural nodes forming human silhouette */}
-                    {neuralNodes.map((node) => (
-                      <circle
-                        key={node.id}
-                        cx={node.cx}
-                        cy={node.cy}
-                        r={node.r}
-                        fill="rgba(0, 240, 255, 0.6)"
-                        className="animate-pulse"
-                        style={{ animationDelay: `${node.delay}s` }}
-                      />
-                    ))}
-                    {/* Connection lines */}
-                    {neuralLinks.map((line) => (
-                      <line
-                        key={`line-${line.id}`}
-                        x1={line.x1}
-                        y1={line.y1}
-                        x2={line.x2}
-                        y2={line.y2}
-                        stroke="rgba(0, 240, 255, 0.2)"
-                        strokeWidth={1}
-                      />
-                    ))}
-                  </svg>
-                </div>
+      <motion.div
+        aria-hidden="true"
+        className="pointer-events-none absolute -left-20 top-28 h-72 w-72 rounded-full bg-cyan-400/10 blur-3xl"
+        style={{ y: orbOneY }}
+      />
+      <motion.div
+        aria-hidden="true"
+        className="pointer-events-none absolute -right-16 bottom-20 h-80 w-80 rounded-full bg-blue-500/10 blur-3xl"
+        style={{ y: orbTwoY }}
+      />
 
-                {/* Central identity marker */}
-                <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-center">
-                  <div className="w-24 h-24 rounded-full border-2 border-cyan-400/50 flex items-center justify-center mb-4 mx-auto">
-                    <span className="font-display text-3xl text-cyan-400">SP</span>
-                  </div>
-                  <p className="font-mono text-xs text-cyan-400/60 tracking-wider">IDENTITY CORE</p>
-                </div>
+      <div className="relative z-10 mx-auto w-full max-w-7xl px-6 lg:px-10">
+        <motion.div
+          className="rounded-[30px] border border-white/10 bg-[#060d1d]/80 p-6 shadow-[0_30px_120px_rgba(0,0,0,0.55)] backdrop-blur-xl lg:p-10"
+          initial={reduceMotion ? { opacity: 0 } : { clipPath: 'inset(0 0 100% 0 round 30px)', opacity: 0.5 }}
+          whileInView={reduceMotion ? { opacity: 1 } : { clipPath: 'inset(0 0 0% 0 round 30px)', opacity: 1 }}
+          viewport={{ once: true, amount: 0.28 }}
+          transition={{ duration: 0.9, ease: [0.16, 1, 0.3, 1] }}
+        >
+          <div className="grid gap-8 lg:grid-cols-[320px_minmax(0,1fr)]">
+            <aside>
+              <p className="font-mono text-xs uppercase tracking-[0.24em] text-cyan-300/70">Story Protocol</p>
+              <h2 className="mt-3 font-display text-4xl text-white md:text-5xl">
+                <span className="block">Not A Bio.</span>
+                <span className="block gradient-text">A Build Narrative.</span>
+              </h2>
+              <p className="mt-4 text-sm leading-relaxed text-white/65">
+                Explore this as chapters. Every chapter has a different engineering intent and execution style.
+              </p>
+
+              <div className="mt-6 space-y-3">
+                {storyChapters.map((chapter, index) => {
+                  const selected = index === activeChapterIndex;
+
+                  return (
+                    <button
+                      key={chapter.id}
+                      type="button"
+                      onClick={() => setActiveChapterIndex(index)}
+                      className={`group w-full rounded-2xl border px-4 py-3 text-left transition-all duration-300 ${
+                        selected
+                          ? 'border-cyan-300/60 bg-cyan-300/12'
+                          : 'border-white/10 bg-white/5 hover:border-cyan-300/35 hover:bg-cyan-300/8'
+                      }`}
+                      data-cursor-label="Open chapter"
+                    >
+                      <div className="flex items-center justify-between">
+                        <span className="font-mono text-[11px] uppercase tracking-[0.2em] text-cyan-200/70">{chapter.id}</span>
+                        <ArrowRight className={`h-4 w-4 text-cyan-200/70 transition-transform ${selected ? 'translate-x-0.5' : ''}`} />
+                      </div>
+                      <p className="mt-2 font-display text-lg text-white">{chapter.title}</p>
+                      <p className="font-mono text-[10px] uppercase tracking-[0.18em] text-white/45">{chapter.period}</p>
+                    </button>
+                  );
+                })}
               </div>
+            </aside>
 
-              {/* Bottom gradient */}
-              <div className="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-t from-[#0B0F17] to-transparent" />
-            </div>
-          </NeuralCard>
-        </div>
-
-        {/* Info Panel */}
-        <div
-          ref={panelRef}
-          className="absolute neural-anim-target"
-          style={{ left: '46vw', top: '18vh', width: '46vw', height: '64vh' }}
-        >
-          <NeuralCard className="w-full h-full p-8 flex flex-col">
-            {/* Header */}
-            <div className="mb-6">
-              <p className="font-mono text-xs text-cyan-400/60 uppercase tracking-[0.2em] mb-2">
-                Identity Core
-              </p>
-              <h2 className="font-display text-4xl md:text-5xl text-white mb-2">Surya Prakash</h2>
-              <p className="font-mono text-sm text-white/60">
-                AI Engineer · Systems Builder
-              </p>
-            </div>
-
-            {/* Description */}
-            <div className="flex-1 space-y-4">
-              <p className="text-white/80 leading-relaxed">
-                I design end-to-end systems that turn noisy data into reliable decisions.
-                From prototype to production, I optimize for latency, cost, and maintainability.
-              </p>
-              <p className="text-white/80 leading-relaxed">
-                Currently building intelligent infrastructure at the intersection of ML and backend.
-                My work spans conversational AI, predictive maintenance, and edge vision systems.
-              </p>
-              <p className="text-white/80 leading-relaxed">
-                I believe in the power of blending research rigor with engineering pragmatism
-                to create systems that not only work in theory but scale in practice.
-              </p>
-            </div>
-
-            {/* Stats */}
-            <div ref={statsRef} className="flex gap-8 mt-8 pt-6 border-t border-white/10">
-              {stats.map((stat, index) => (
-                <div key={index} className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-lg bg-cyan-400/10 flex items-center justify-center">
-                    <stat.icon className="w-5 h-5 text-cyan-400" />
+            <div className="relative">
+              <AnimatePresence mode="wait">
+                <motion.article
+                  key={activeChapter.id}
+                  className="relative overflow-hidden rounded-3xl border border-cyan-300/20 bg-gradient-to-br from-[#0b1730]/92 via-[#08172a]/88 to-[#041022]/90 p-6 lg:p-8"
+                  initial={{ opacity: 0, x: 48, rotateY: -8 }}
+                  animate={{ opacity: 1, x: 0, rotateY: 0 }}
+                  exit={{ opacity: 0, x: -40, rotateY: 8 }}
+                  transition={{ duration: 0.55, ease: [0.22, 1, 0.36, 1] }}
+                >
+                  <div className="pointer-events-none absolute right-5 top-4 flex h-20 w-20 items-center justify-center rounded-full border border-cyan-300/20 bg-cyan-300/10">
+                    <Binary className="h-8 w-8 text-cyan-200/65" />
                   </div>
-                  <div>
-                    <p className="font-display text-2xl text-white">{stat.value}</p>
-                    <p className="font-mono text-xs text-white/50">{stat.label}</p>
-                  </div>
-                </div>
-              ))}
-            </div>
 
-            {/* CTA */}
-            <button className="mt-6 flex items-center gap-2 text-cyan-400 font-mono text-sm group">
-              <span>Read the full story</span>
-              <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
-            </button>
-          </NeuralCard>
-        </div>
+                  <p className="font-mono text-xs uppercase tracking-[0.2em] text-cyan-200/70">{activeChapter.period}</p>
+                  <h3 className="mt-2 font-display text-3xl text-white">{activeChapter.title}</h3>
+                  <p className="mt-4 max-w-3xl leading-relaxed text-white/75">{activeChapter.summary}</p>
+
+                  <div className="mt-6 grid gap-3 sm:grid-cols-2">
+                    {activeChapter.highlights.map((item) => (
+                      <motion.div
+                        key={item}
+                        className="rounded-xl border border-white/10 bg-white/5 px-4 py-3"
+                        initial={{ opacity: 0, y: 16 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ duration: 0.45 }}
+                      >
+                        <p className="text-sm text-white/75">{item}</p>
+                      </motion.div>
+                    ))}
+                  </div>
+
+                  <div className="mt-8 rounded-2xl border border-white/10 bg-[#081424]/80 p-4">
+                    <div className="flex items-center gap-2">
+                      <span className="relative flex h-2.5 w-2.5">
+                        <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-300/70" />
+                        <span className="relative inline-flex h-2.5 w-2.5 rounded-full bg-emerald-300" />
+                      </span>
+                      <p className="font-mono text-[11px] uppercase tracking-[0.2em] text-emerald-200/80">Currently</p>
+                    </div>
+                    <div className="mt-3 space-y-2">
+                      {currentSignals.map((signal) => (
+                        <div key={signal} className="flex items-start gap-2 text-sm text-white/72">
+                          <Sparkles className="mt-0.5 h-3.5 w-3.5 text-cyan-200/70" />
+                          <span>{signal}</span>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                </motion.article>
+              </AnimatePresence>
+            </div>
+          </div>
+
+          <div className="mt-8 grid gap-4 sm:grid-cols-3">
+            {metrics.map((metric, index) => (
+              <CounterMetric
+                key={metric.label}
+                label={metric.label}
+                target={metric.target}
+                suffix={metric.suffix}
+                inView={inView}
+                delay={index * 130}
+              />
+            ))}
+          </div>
+
+          <motion.div
+            className="mt-6 flex flex-wrap items-center gap-3 text-xs text-white/55"
+            initial={{ opacity: 0, y: 12 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, amount: 0.6 }}
+            transition={{ duration: 0.5, delay: 0.15 }}
+          >
+            <span className="inline-flex items-center gap-1 rounded-full border border-white/10 px-3 py-1 font-mono uppercase tracking-[0.16em]">
+              <Activity className="h-3 w-3 text-cyan-300/70" />
+              Live Build Rhythm
+            </span>
+            <span className="inline-flex items-center gap-1 rounded-full border border-white/10 px-3 py-1 font-mono uppercase tracking-[0.16em]">
+              <GitBranch className="h-3 w-3 text-cyan-300/70" />
+              Open Source First
+            </span>
+          </motion.div>
+        </motion.div>
       </div>
     </section>
   );

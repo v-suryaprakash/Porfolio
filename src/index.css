@@ -318,6 +318,19 @@
   animation: orbit 8s linear infinite;
 }
 
+/* Custom cursor enablement for precision pointers */
+.custom-cursor-enabled,
+.custom-cursor-enabled * {
+  cursor: none !important;
+}
+
+@media (pointer: coarse), (prefers-reduced-motion: reduce) {
+  .custom-cursor-enabled,
+  .custom-cursor-enabled * {
+    cursor: auto !important;
+  }
+}
+
 .animate-scanline {
   animation: scanline 3s linear infinite;
 }
