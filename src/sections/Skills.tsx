@@ -18,6 +18,7 @@ interface SkillBranch {
 interface SkillField {
   id: string;
   label: string;
+  labelLines: [string, string];
   subtitle: string;
   icon: LucideIcon;
   branches: SkillBranch[];
@@ -27,201 +28,206 @@ const skillFields: SkillField[] = [
   {
     id: 'programming',
     label: 'Programming Languages',
+    labelLines: ['Programming', 'Languages'],
     subtitle: 'Core coding stack',
     icon: Code2,
     branches: [
-      {
-        title: 'Python',
-        points: ['NumPy', 'Pandas'],
-      },
-      {
-        title: 'C',
-        points: ['Pointers', 'Structures'],
-      },
-      {
-        title: 'Java',
-        points: ['OOP', 'Collections'],
-      },
-      {
-        title: 'HTML / CSS / JavaScript',
-        points: ['DOM', 'Fetch API'],
-      },
+      { title: 'Python', points: ['NumPy', 'Pandas'] },
+      { title: 'C', points: ['Pointers', 'Structures'] },
+      { title: 'Java', points: ['OOP', 'Collections'] },
+      { title: 'HTML / CSS / JavaScript', points: ['DOM', 'Fetch API'] },
     ],
   },
   {
     id: 'aiml',
-    label: 'AI & ML',
+    label: 'Machine Learning',
+    labelLines: ['Machine', 'Learning'],
     subtitle: 'Data to model workflow',
     icon: BrainCircuit,
     branches: [
-      {
-        title: 'Data Analysis',
-        points: ['Pandas', 'NumPy'],
-      },
-      {
-        title: 'Machine Learning',
-        points: ['Scikit-learn', 'Model Selection'],
-      },
-      {
-        title: 'Deep Learning (Basic)',
-        points: ['TensorFlow', 'Keras'],
-      },
-      {
-        title: 'Preprocessing & Visualization',
-        points: ['Matplotlib', 'StandardScaler'],
-      },
+      { title: 'Data Analysis', points: ['Pandas', 'NumPy'] },
+      { title: 'Machine Learning', points: ['Scikit-learn', 'Model Selection'] },
+      { title: 'Deep Learning (Basic)', points: ['TensorFlow', 'Keras'] },
+      { title: 'Preprocessing & Visualization', points: ['Matplotlib', 'StandardScaler'] },
     ],
   },
   {
     id: 'software',
-    label: 'Software & System Development',
+    label: 'System Development',
+    labelLines: ['System', 'Development'],
     subtitle: 'Practical system building',
     icon: Boxes,
     branches: [
-      {
-        title: 'Backend Logic Development',
-        points: ['Node.js', 'Express'],
-      },
-      {
-        title: 'Database Design & Management',
-        points: ['PostgreSQL', 'SQL'],
-      },
-      {
-        title: 'Web3 / Blockchain Fundamentals',
-        points: ['Solidity', 'Hardhat'],
-      },
-      {
-        title: 'Full Stack Development',
-        points: ['React', 'REST API'],
-      },
+      { title: 'Backend Logic Development', points: ['Node.js', 'Express'] },
+      { title: 'Database Design & Management', points: ['PostgreSQL', 'SQL'] },
+      { title: 'Web3 / Blockchain Fundamentals', points: ['Solidity', 'Hardhat'] },
+      { title: 'Full Stack Development', points: ['React', 'REST API'] },
     ],
   },
   {
     id: 'tools',
     label: 'Tools & Technologies',
+    labelLines: ['Tools &', 'Technologies'],
     subtitle: 'Daily development tools',
     icon: Wrench,
     branches: [
-      {
-        title: 'Git & GitHub',
-        points: ['Git', 'GitHub'],
-      },
-      {
-        title: 'Jupyter Notebook',
-        points: ['IPython', 'Notebook Cells'],
-      },
-      {
-        title: 'Matplotlib / Scikit-learn',
-        points: ['Matplotlib', 'Scikit-learn'],
-      },
-      {
-        title: 'Linux',
-        points: ['Bash', 'CLI'],
-      },
+      { title: 'Git & GitHub', points: ['Git', 'GitHub'] },
+      { title: 'Jupyter Notebook', points: ['IPython', 'Notebook Cells'] },
+      { title: 'Matplotlib / Scikit-learn', points: ['Matplotlib', 'Scikit-learn'] },
+      { title: 'Linux', points: ['Bash', 'CLI'] },
     ],
   },
   {
     id: 'mindset',
     label: 'Mindset & Strengths',
+    labelLines: ['Mindset &', 'Strengths'],
     subtitle: 'Execution mindset',
     icon: Sparkles,
     branches: [
-      {
-        title: 'Analytical Thinking',
-        points: ['Pattern Analysis', 'Root Cause'],
-      },
-      {
-        title: 'Problem Decomposition',
-        points: ['Modular Breakdown', 'Task Prioritization'],
-      },
-      {
-        title: 'Self-Driven and Fast Learning',
-        points: ['Rapid Adaptation', 'Self Learning'],
-      },
-      {
-        title: 'Consistency & Discipline',
-        points: ['Daily Practice', 'Execution Focus'],
-      },
+      { title: 'Analytical Thinking', points: ['Pattern Analysis', 'Root Cause'] },
+      { title: 'Problem Decomposition', points: ['Modular Breakdown', 'Task Prioritization'] },
+      { title: 'Self-Driven and Fast Learning', points: ['Rapid Adaptation', 'Self Learning'] },
+      { title: 'Consistency & Discipline', points: ['Daily Practice', 'Execution Focus'] },
     ],
   },
 ];
 
 const branchLayout = [
-  {
-    targetX: 27,
-    targetY: 28,
-    anchorX: 43,
-    anchorY: 43,
-    controlX: 34,
-    controlY: 34,
-    cardClass: 'left-[3.5%] top-[10%] w-[27%]',
-  },
-  {
-    targetX: 73,
-    targetY: 28,
-    anchorX: 57,
-    anchorY: 43,
-    controlX: 66,
-    controlY: 34,
-    cardClass: 'right-[3.5%] top-[10%] w-[27%]',
-  },
-  {
-    targetX: 27,
-    targetY: 72,
-    anchorX: 43,
-    anchorY: 57,
-    controlX: 34,
-    controlY: 66,
-    cardClass: 'left-[3.5%] bottom-[10%] w-[27%]',
-  },
-  {
-    targetX: 73,
-    targetY: 72,
-    anchorX: 57,
-    anchorY: 57,
-    controlX: 66,
-    controlY: 66,
-    cardClass: 'right-[3.5%] bottom-[10%] w-[27%]',
-  },
+  { targetX: 32.8, targetY: 44.5, anchorX: 46.6, anchorY: 60, cardClass: 'left-[4%] top-[12%] w-[28%]' },
+  { targetX: 67.2, targetY: 44.5, anchorX: 53.4, anchorY: 60, cardClass: 'right-[4%] top-[12%] w-[28%]' },
+  { targetX: 32.8, targetY: 56.5, anchorX: 46.6, anchorY: 60, cardClass: 'left-[4%] bottom-[12%] w-[28%]' },
+  { targetX: 67.2, targetY: 56.5, anchorX: 53.4, anchorY: 60, cardClass: 'right-[4%] bottom-[12%] w-[28%]' },
 ] as const;
 
-function CenterNode({
+const clockwiseRevealOrder = [0, 1, 3, 2] as const;
+
+const revealDelays = {
+  hologram: 0.08,
+  label: 0.34,
+  skills: 0.74,
+  step: 0.16,
+} as const;
+
+function getClockwiseDelay(index: number) {
+  const step = clockwiseRevealOrder.indexOf(index as (typeof clockwiseRevealOrder)[number]);
+  return revealDelays.skills + Math.max(0, step) * revealDelays.step;
+}
+
+function HologramCore({
   field,
   reducedMotion,
 }: {
   field: SkillField;
   reducedMotion: boolean;
 }) {
-  const FieldIcon = field.icon;
-
   return (
     <AnimatePresence mode="wait">
       <motion.div
         key={field.id}
-        initial={reducedMotion ? { opacity: 0 } : { opacity: 0, scale: 0.86, y: 20 }}
+        initial={reducedMotion ? { opacity: 0 } : { opacity: 0, scale: 0.9, y: 10 }}
         animate={{ opacity: 1, scale: 1, y: 0 }}
-        exit={reducedMotion ? { opacity: 0 } : { opacity: 0, scale: 0.9, y: -18 }}
-        transition={{ duration: 0.38, ease: [0.2, 1, 0.3, 1] }}
-        className="relative mx-auto w-full max-w-[390px]"
+        exit={reducedMotion ? { opacity: 0 } : { opacity: 0, scale: 0.95, y: -10 }}
+        transition={{ duration: 0.35, ease: [0.2, 1, 0.3, 1] }}
+        className="relative mx-auto h-[280px] w-full max-w-[560px] sm:h-[320px] lg:h-[350px]"
       >
-        <div className="relative min-h-[250px] overflow-hidden border border-cyan-200/35 bg-[#061325]/92 px-6 pb-12 pt-8 shadow-[0_0_45px_rgba(0,240,255,0.22)] [clip-path:polygon(8%_0%,92%_0%,100%_18%,100%_68%,74%_68%,50%_100%,26%_68%,0%_68%,0%_18%)]">
-          <div className="pointer-events-none absolute inset-x-0 top-0 h-[2px] bg-gradient-to-r from-transparent via-cyan-200/80 to-transparent" />
-          <div className="pointer-events-none absolute -right-10 -top-10 h-28 w-28 rounded-full bg-cyan-300/10 blur-2xl" />
-          <div className="pointer-events-none absolute left-1/2 top-[66%] h-16 w-16 -translate-x-1/2 rounded-full bg-cyan-300/10 blur-xl" />
+        <motion.div
+          className="pointer-events-none absolute inset-x-0 bottom-[3%] flex justify-center"
+          initial={{ opacity: 0, scale: 0.75 }}
+          animate={
+            reducedMotion
+              ? { opacity: 1, scale: 1 }
+              : { opacity: [0.48, 0.95, 0.62, 1], scale: [0.94, 1.03, 0.98, 1.04] }
+          }
+          transition={
+            reducedMotion
+              ? { duration: 0.28, delay: revealDelays.hologram }
+              : { duration: 2.2, delay: revealDelays.hologram, repeat: Infinity, ease: 'easeInOut' }
+          }
+        >
+          <div className="relative h-[22px] w-[200px] rounded-[50%] border border-cyan-200/80 bg-cyan-200/14 shadow-[0_0_34px_rgba(82,244,255,0.42)]" />
+          <div className="absolute left-1/2 top-1/2 h-[12px] w-[86px] -translate-x-1/2 -translate-y-1/2 rounded-[50%] bg-[#031126]/86" />
+          <div className="absolute left-1/2 top-1/2 h-[44px] w-[262px] -translate-x-1/2 -translate-y-1/2 rounded-[50%] border border-cyan-200/38" />
+          <div className="absolute left-1/2 top-1/2 h-[62px] w-[322px] -translate-x-1/2 -translate-y-1/2 rounded-[50%] border border-cyan-200/20" />
+        </motion.div>
 
-          <div className="flex justify-center">
-            <div className="flex h-14 w-14 items-center justify-center rounded-xl border border-cyan-200/30 bg-cyan-200/12">
-              <FieldIcon className="h-7 w-7 text-cyan-100" />
-            </div>
-          </div>
+        <motion.div
+          className="pointer-events-none absolute inset-x-0 bottom-[9.5%] flex justify-center"
+          initial={{ opacity: 0, scaleY: 0.6 }}
+          animate={
+            reducedMotion
+              ? { opacity: 1, scaleY: 1 }
+              : { opacity: [0.24, 0.7, 0.34, 0.72], scaleY: [0.82, 1, 0.9, 1.02] }
+          }
+          transition={
+            reducedMotion
+              ? { duration: 0.28, delay: revealDelays.hologram + 0.06 }
+              : { duration: 1.9, delay: revealDelays.hologram + 0.06, repeat: Infinity, ease: 'easeInOut' }
+          }
+        >
+          <div className="h-[154px] w-[360px] bg-gradient-to-t from-cyan-300/28 via-cyan-300/12 to-transparent [clip-path:polygon(50%_100%,85%_0%,15%_0%)] blur-[0.35px]" />
+        </motion.div>
 
-          <h3 className="mx-auto mt-4 max-w-[310px] text-center font-display text-[clamp(1.9rem,2.2vw,2.8rem)] leading-tight text-cyan-50">
-            {field.label}
-          </h3>
-          <p className="mt-2 text-center font-mono text-[10px] uppercase tracking-[0.16em] text-white/62">
-            {field.subtitle}
-          </p>
-        </div>
+        <motion.div
+          className="pointer-events-none absolute inset-x-0 top-[58%] flex justify-center px-4"
+          initial={{ opacity: 0, scaleX: 0.85 }}
+          animate={
+            reducedMotion
+              ? { opacity: 1, scaleX: 1 }
+              : { opacity: [0.46, 0.92, 0.58, 0.9], scaleX: [0.96, 1.02, 0.98, 1.03] }
+          }
+          transition={
+            reducedMotion
+              ? { duration: 0.26, delay: revealDelays.hologram + 0.12 }
+              : { duration: 1.7, delay: revealDelays.hologram + 0.12, repeat: Infinity, ease: 'easeInOut' }
+          }
+        >
+          <div className="relative h-[62px] w-full max-w-[320px] rounded-[999px] border border-cyan-200/28 bg-gradient-to-r from-transparent via-cyan-200/16 to-transparent shadow-[0_0_32px_rgba(82,244,255,0.28)]" />
+          <div className="absolute left-1/2 top-1/2 h-[22px] w-[236px] -translate-x-1/2 -translate-y-1/2 rounded-[999px] bg-cyan-200/18 blur-[10px]" />
+        </motion.div>
+
+        <motion.div
+          className="pointer-events-none absolute inset-x-0 top-[68%] flex justify-center"
+          initial={{ opacity: 0, scale: 0.75 }}
+          animate={
+            reducedMotion
+              ? { opacity: 1, scale: 1 }
+              : { opacity: [0.4, 0.9, 0.55, 0.95], scale: [0.92, 1.05, 0.98, 1.04] }
+          }
+          transition={
+            reducedMotion
+              ? { duration: 0.26, delay: revealDelays.hologram + 0.12 }
+              : { duration: 1.7, delay: revealDelays.hologram + 0.12, repeat: Infinity, ease: 'easeInOut' }
+          }
+        >
+          <div className="h-4 w-4 rounded-full border border-cyan-200/75 bg-cyan-200/30 shadow-[0_0_22px_rgba(120,244,255,0.72)]" />
+        </motion.div>
+
+        <motion.div
+          className="absolute inset-x-0 top-[52.5%] flex justify-center px-3"
+          initial={reducedMotion ? { opacity: 0 } : { opacity: 0, y: 16, scale: 0.94, filter: 'blur(8px)' }}
+          animate={reducedMotion ? { opacity: 1 } : { opacity: 1, y: 0, scale: 1, filter: 'blur(0px)' }}
+          transition={{ duration: 0.32, delay: revealDelays.label }}
+        >
+          <motion.h3
+            className="max-w-[390px] text-center font-display text-[clamp(2rem,2.3vw,3rem)] leading-[1.06] text-cyan-100"
+            style={{ textShadow: '0 0 28px rgba(83, 244, 255, 0.7)' }}
+            animate={
+              reducedMotion
+                ? { opacity: 1 }
+                : {
+                    opacity: [0.68, 1, 0.8, 1, 0.88],
+                  }
+            }
+            transition={
+              reducedMotion
+                ? { duration: 0.2 }
+                : { duration: 1.65, repeat: Infinity, ease: 'easeInOut', delay: revealDelays.label }
+            }
+          >
+            <span className="block">{field.labelLines[0]}</span>
+            <span className="block">{field.labelLines[1]}</span>
+          </motion.h3>
+        </motion.div>
       </motion.div>
     </AnimatePresence>
   );
@@ -229,7 +235,7 @@ function CenterNode({
 
 export default function Skills() {
   const reducedMotion = useReducedMotion();
-  const [activeFieldId, setActiveFieldId] = useState(skillFields[0].id);
+  const [activeFieldId, setActiveFieldId] = useState('tools');
 
   const activeField = useMemo(
     () => skillFields.find((field) => field.id === activeFieldId) ?? skillFields[0],
@@ -248,9 +254,9 @@ export default function Skills() {
           viewport={{ once: true, amount: 0.5 }}
           transition={{ duration: 0.55, ease: [0.22, 1, 0.36, 1] }}
         >
-          <p className="font-mono text-xs text-cyan-400/60 uppercase tracking-[0.2em]">Capability Map</p>
-          <h2 className="mt-2 font-display text-4xl md:text-5xl text-white">Skills</h2>
-          <p className="mt-2 font-mono text-sm text-white/50">Pick a field above to rewire the center and branch network.</p>
+          <p className="font-mono text-xs text-cyan-400/60 uppercase tracking-[0.2em]">Tech Arsenal</p>
+          <h2 className="mt-2 font-display text-4xl md:text-5xl text-white">Skill Constellation</h2>
+          <p className="mt-2 font-mono text-sm text-white/50">Select a domain to visualize the capability graph powering end-to-end product execution.</p>
         </motion.div>
 
         <div className="relative mt-4 overflow-hidden rounded-2xl border border-cyan-300/20 bg-[#061223]/72 p-2 shadow-[0_12px_35px_rgba(2,10,25,0.5)] backdrop-blur-xl">
@@ -268,7 +274,6 @@ export default function Skills() {
                   type="button"
                   onClick={() => setActiveFieldId(field.id)}
                   className="group relative rounded-xl px-3 py-3 text-left outline-none focus-visible:ring-2 focus-visible:ring-cyan-200/75"
-                  data-cursor-label={`Open ${field.label}`}
                 >
                   {isActive ? (
                     <motion.span
@@ -309,44 +314,50 @@ export default function Skills() {
 
         <div className="relative mt-5 hidden min-h-0 flex-1 overflow-hidden rounded-[24px] border border-white/10 bg-[#041022]/35 lg:block">
           <svg className="pointer-events-none absolute inset-0 h-full w-full" viewBox="0 0 100 100" preserveAspectRatio="none">
-            {branchLayout.map((node, index) => (
-              <g key={`line-${activeField.id}-${index}`}>
-                <motion.path
-                  d={`M ${node.anchorX} ${node.anchorY} Q ${node.controlX} ${node.controlY} ${node.targetX} ${node.targetY}`}
-                  fill="none"
-                  stroke="rgba(125, 234, 255, 0.5)"
-                  strokeWidth="0.28"
-                  strokeLinecap="round"
-                  initial={{ pathLength: 0, opacity: 0 }}
-                  animate={{ pathLength: 1, opacity: 1 }}
-                  transition={{ duration: 0.45, delay: index * 0.05 }}
-                />
+            {branchLayout.map((node, index) => {
+              const revealDelay = getClockwiseDelay(index);
 
-                <motion.circle
-                  cx={node.targetX}
-                  cy={node.targetY}
-                  r="0.65"
-                  fill="rgba(159, 244, 255, 0.95)"
-                  initial={{ scale: 0, opacity: 0 }}
-                  animate={{ scale: 1, opacity: 1 }}
-                  transition={{ duration: 0.25, delay: 0.18 + index * 0.05 }}
-                />
+              return (
+                <g key={`line-${activeField.id}-${index}`}>
+                  <motion.path
+                    d={`M ${node.anchorX} ${node.anchorY} L ${node.targetX} ${node.targetY}`}
+                    fill="none"
+                    stroke="rgba(125, 234, 255, 0.5)"
+                    strokeWidth="0.22"
+                    strokeLinecap="round"
+                    initial={{ pathLength: 0, opacity: 0 }}
+                    animate={{ pathLength: 1, opacity: 1 }}
+                    transition={{ duration: 0.42, delay: revealDelay }}
+                  />
 
-                <motion.circle
-                  cx={node.anchorX}
-                  cy={node.anchorY}
-                  r="0.52"
-                  fill="rgba(159, 244, 255, 0.7)"
-                  initial={{ scale: 0, opacity: 0 }}
-                  animate={{ scale: 1, opacity: 1 }}
-                  transition={{ duration: 0.25, delay: 0.15 + index * 0.05 }}
-                />
-              </g>
-            ))}
+                  <motion.circle
+                    cx={node.targetX}
+                    cy={node.targetY}
+                    r="0.65"
+                    fill="rgba(159, 244, 255, 0.95)"
+                    initial={{ scale: 0, opacity: 0 }}
+                    animate={{ scale: 1, opacity: 1 }}
+                    transition={{ duration: 0.22, delay: revealDelay + 0.07 }}
+                  />
+
+                  <motion.circle
+                    cx={node.anchorX}
+                    cy={node.anchorY}
+                    r="0.52"
+                    fill="rgba(159, 244, 255, 0.7)"
+                    initial={{ scale: 0, opacity: 0 }}
+                    animate={{ scale: 1, opacity: 1 }}
+                    transition={{ duration: 0.22, delay: revealDelay + 0.03 }}
+                  />
+                </g>
+              );
+            })}
           </svg>
 
-          <div className="absolute left-1/2 top-1/2 z-20 w-[30%] min-w-[290px] -translate-x-1/2 -translate-y-1/2">
-            <CenterNode field={activeField} reducedMotion={Boolean(reducedMotion)} />
+          <div className="absolute inset-x-0 top-[60%] z-20 flex -translate-y-1/2 justify-center px-4">
+            <div className="w-full max-w-[560px]">
+              <HologramCore field={activeField} reducedMotion={Boolean(reducedMotion)} />
+            </div>
           </div>
 
           <AnimatePresence mode="wait">
@@ -355,15 +366,16 @@ export default function Skills() {
                 const node = branchLayout[index];
                 const originX = (50 - node.targetX) * 5;
                 const originY = (50 - node.targetY) * 5;
+                const revealDelay = getClockwiseDelay(index);
 
                 return (
                   <motion.div
                     key={`${activeField.id}-${branch.title}`}
                     className={`absolute ${node.cardClass}`}
-                    initial={reducedMotion ? { opacity: 0 } : { opacity: 0, x: originX, y: originY, scale: 0.86 }}
+                    initial={reducedMotion ? { opacity: 0 } : { opacity: 0, x: originX, y: originY, scale: 0.88 }}
                     animate={{ opacity: 1, x: 0, y: 0, scale: 1 }}
                     exit={reducedMotion ? { opacity: 0 } : { opacity: 0, x: originX * 0.35, y: originY * 0.35, scale: 0.92 }}
-                    transition={{ duration: 0.45, delay: 0.1 + index * 0.06, ease: [0.2, 1, 0.3, 1] }}
+                    transition={{ duration: 0.4, delay: revealDelay + 0.04, ease: [0.2, 1, 0.3, 1] }}
                     whileHover={{ y: -4, scale: 1.01 }}
                   >
                     <TiltCard className="h-full rounded-2xl" maxTilt={8}>
@@ -390,7 +402,7 @@ export default function Skills() {
         </div>
 
         <div className="mt-8 space-y-4 lg:hidden">
-          <CenterNode field={activeField} reducedMotion={Boolean(reducedMotion)} />
+          <HologramCore field={activeField} reducedMotion={Boolean(reducedMotion)} />
 
           <AnimatePresence mode="wait">
             <motion.div key={`mobile-${activeField.id}`} initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="grid gap-3">

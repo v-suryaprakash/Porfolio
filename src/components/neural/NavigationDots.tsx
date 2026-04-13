@@ -100,12 +100,12 @@ export default function NavigationDots({ items, className = '' }: NavigationDots
 
   return (
     <div
-      className={`fixed right-5 top-1/2 -translate-y-1/2 z-50 flex flex-col rounded-2xl border p-1.5 backdrop-blur-sm origin-right transition-all duration-300 ${
+      className={`fixed right-3 top-1/2 -translate-y-1/2 z-50 flex flex-col rounded-2xl border p-1 backdrop-blur-sm origin-right transition-all duration-300 ${
         isVisible ? 'opacity-100 translate-x-0' : 'opacity-0 translate-x-4 pointer-events-none'
       } ${
         isExpanded
-          ? 'scale-110 bg-[#081428]/92 border-cyan-200/35 shadow-[0_10px_35px_rgba(0,0,0,0.45)]'
-          : 'scale-100 bg-[#071222]/60 border-white/12'
+          ? 'scale-105 bg-[#081428]/86 border-cyan-200/28 shadow-[0_8px_26px_rgba(0,0,0,0.4)]'
+          : 'scale-100 bg-transparent border-transparent shadow-none'
       } ${className}`}
       onMouseEnter={() => setIsExpanded(true)}
       onMouseLeave={() => setIsExpanded(false)}
@@ -117,14 +117,14 @@ export default function NavigationDots({ items, className = '' }: NavigationDots
           key={item.id}
           onClick={() => scrollToSection(item.id, index)}
           className={`group relative flex items-center justify-center rounded-full transition-all duration-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cyan-200/75 ${
-            isExpanded ? 'h-11 w-11' : 'h-9 w-9'
+            isExpanded ? 'h-10 w-10' : 'h-8 w-8'
           }`}
           aria-label={`Go to ${item.label}`}
           aria-current={activeIndex === index ? 'true' : undefined}
         >
           {/* Label tooltip */}
           <span
-            className={`absolute right-[calc(100%+0.6rem)] px-2.5 py-1 text-xs font-mono text-white/75 bg-[#061225]/88 border border-cyan-200/20 rounded-md whitespace-nowrap transition-all duration-200 ${
+            className={`pointer-events-none absolute right-[calc(100%+0.45rem)] font-mono text-[11px] uppercase tracking-[0.14em] text-white/78 whitespace-nowrap transition-all duration-200 ${
               isExpanded ? 'opacity-100 translate-x-0' : 'opacity-0 translate-x-1 pointer-events-none'
             }`}
           >
@@ -136,10 +136,10 @@ export default function NavigationDots({ items, className = '' }: NavigationDots
             className={`rounded-full transition-all duration-300 ${
               activeIndex === index
                 ? isExpanded
-                  ? 'w-4 h-4 bg-cyan-300 shadow-[0_0_14px_rgba(0,240,255,0.9)]'
+                  ? 'w-3.5 h-3.5 bg-cyan-300 shadow-[0_0_14px_rgba(0,240,255,0.9)]'
                   : 'w-2.5 h-2.5 bg-cyan-400 scale-125 shadow-[0_0_10px_rgba(0,240,255,0.8)]'
                 : isExpanded
-                  ? 'w-3 h-3 bg-white/45 group-hover:bg-cyan-100/85'
+                  ? 'w-2.5 h-2.5 bg-white/45 group-hover:bg-cyan-100/85'
                   : 'w-2 h-2 bg-white/30 hover:bg-white/50'
             }`}
           />
