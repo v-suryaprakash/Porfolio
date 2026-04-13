@@ -93,10 +93,10 @@ const skillFields: SkillField[] = [
 ];
 
 const branchLayout = [
-  { targetX: 32.8, targetY: 44.5, anchorX: 46.6, anchorY: 60, cardClass: 'left-[4%] top-[12%] w-[28%]' },
-  { targetX: 67.2, targetY: 44.5, anchorX: 53.4, anchorY: 60, cardClass: 'right-[4%] top-[12%] w-[28%]' },
-  { targetX: 32.8, targetY: 56.5, anchorX: 46.6, anchorY: 60, cardClass: 'left-[4%] bottom-[12%] w-[28%]' },
-  { targetX: 67.2, targetY: 56.5, anchorX: 53.4, anchorY: 60, cardClass: 'right-[4%] bottom-[12%] w-[28%]' },
+  { targetX: 32.8, targetY: 36.5, anchorX: 43.0, anchorY: 43, cardClass: 'left-[4%] top-[12%] w-[28%]' },
+  { targetX: 67.2, targetY: 42.5, anchorX: 56.0, anchorY: 38, cardClass: 'right-[4%] top-[12%] w-[28%]' },
+  { targetX: 32.8, targetY: 58.5, anchorX: 44.0, anchorY: 44, cardClass: 'left-[4%] bottom-[12%] w-[28%]' },
+  { targetX: 67.2, targetY: 58.5, anchorX: 56.0, anchorY: 44, cardClass: 'right-[4%] bottom-[12%] w-[28%]' },
 ] as const;
 
 const clockwiseRevealOrder = [0, 1, 3, 2] as const;
@@ -128,86 +128,91 @@ function HologramCore({
         animate={{ opacity: 1, scale: 1, y: 0 }}
         exit={reducedMotion ? { opacity: 0 } : { opacity: 0, scale: 0.95, y: -10 }}
         transition={{ duration: 0.35, ease: [0.2, 1, 0.3, 1] }}
-        className="relative mx-auto h-[280px] w-full max-w-[560px] sm:h-[320px] lg:h-[350px]"
+        className="relative mx-auto h-[268px] w-full max-w-[540px] sm:h-[304px] lg:h-[334px]"
       >
+        {/* Realistic Hologram Light Rays */}
         <motion.div
-          className="pointer-events-none absolute inset-x-0 bottom-[3%] flex justify-center"
-          initial={{ opacity: 0, scale: 0.75 }}
-          animate={
-            reducedMotion
-              ? { opacity: 1, scale: 1 }
-              : { opacity: [0.48, 0.95, 0.62, 1], scale: [0.94, 1.03, 0.98, 1.04] }
-          }
-          transition={
-            reducedMotion
-              ? { duration: 0.28, delay: revealDelays.hologram }
-              : { duration: 2.2, delay: revealDelays.hologram, repeat: Infinity, ease: 'easeInOut' }
-          }
-        >
-          <div className="relative h-[22px] w-[200px] rounded-[50%] border border-cyan-200/80 bg-cyan-200/14 shadow-[0_0_34px_rgba(82,244,255,0.42)]" />
-          <div className="absolute left-1/2 top-1/2 h-[12px] w-[86px] -translate-x-1/2 -translate-y-1/2 rounded-[50%] bg-[#031126]/86" />
-          <div className="absolute left-1/2 top-1/2 h-[44px] w-[262px] -translate-x-1/2 -translate-y-1/2 rounded-[50%] border border-cyan-200/38" />
-          <div className="absolute left-1/2 top-1/2 h-[62px] w-[322px] -translate-x-1/2 -translate-y-1/2 rounded-[50%] border border-cyan-200/20" />
-        </motion.div>
-
-        <motion.div
-          className="pointer-events-none absolute inset-x-0 bottom-[9.5%] flex justify-center"
-          initial={{ opacity: 0, scaleY: 0.6 }}
+          className="pointer-events-none absolute inset-x-0 bottom-[18%] flex justify-center origin-bottom"
+          initial={{ opacity: 0, scaleY: 0.1 }}
           animate={
             reducedMotion
               ? { opacity: 1, scaleY: 1 }
-              : { opacity: [0.24, 0.7, 0.34, 0.72], scaleY: [0.82, 1, 0.9, 1.02] }
+              : { opacity: [0.5, 0.8, 0.4, 0.9, 0.6], scaleY: [0.95, 1.05, 0.98, 1.08, 1] }
           }
           transition={
             reducedMotion
-              ? { duration: 0.28, delay: revealDelays.hologram + 0.06 }
-              : { duration: 1.9, delay: revealDelays.hologram + 0.06, repeat: Infinity, ease: 'easeInOut' }
+              ? { duration: 0.3, delay: revealDelays.hologram + 0.1 }
+              : { duration: 2.2, delay: revealDelays.hologram + 0.1, repeat: Infinity, ease: 'easeInOut' }
           }
         >
-          <div className="h-[154px] w-[360px] bg-gradient-to-t from-cyan-300/28 via-cyan-300/12 to-transparent [clip-path:polygon(50%_100%,85%_0%,15%_0%)] blur-[0.35px]" />
+          {/* Main Cone */}
+          <div className="relative h-[190px] w-[200px] [clip-path:polygon(42%_100%,58%_100%,100%_0%,0%_0%)]">
+            <div className="absolute inset-0 bg-gradient-to-t from-cyan-400/40 via-cyan-300/10 to-transparent" />
+            
+            {/* Animated Scanning Lines effect embedded via Framer Motion inside the cone */}
+            <motion.div 
+              className="absolute inset-0 bg-[repeating-linear-gradient(0deg,transparent_0px,transparent_4px,rgba(162,247,255,0.4)_5px,transparent_6px)] opacity-60"
+              animate={{ y: ['0%', '-10%'] }}
+              transition={{ duration: 1.5, repeat: Infinity, ease: 'linear' }}
+            />
+            
+            <div className="absolute inset-0 bg-[repeating-linear-gradient(90deg,transparent_0px,transparent_6px,rgba(162,247,255,0.15)_8px,transparent_10px)] opacity-70" />
+            <div className="absolute inset-x-0 bottom-0 top-1/2 bg-gradient-to-t from-cyan-200/50 to-transparent" />
+          </div>
+          
+          {/* Core Beam */}
+          <div className="absolute bottom-0 h-[230px] w-[240px] [clip-path:polygon(46%_100%,54%_100%,80%_0%,20%_0%)] bg-gradient-to-t from-white/50 via-cyan-100/20 to-transparent blur-[2px]" />
+          
+          {/* Subtle Outer Glow */}
+          <div className="absolute bottom-0 h-[230px] w-[320px] [clip-path:polygon(45%_100%,55%_100%,100%_0%,0%_0%)] bg-gradient-to-t from-cyan-600/30 via-cyan-900/10 to-transparent blur-[8px]" />
         </motion.div>
 
+        {/* Hologram Base 3D Structure */}
         <motion.div
-          className="pointer-events-none absolute inset-x-0 top-[58%] flex justify-center px-4"
-          initial={{ opacity: 0, scaleX: 0.85 }}
-          animate={
-            reducedMotion
-              ? { opacity: 1, scaleX: 1 }
-              : { opacity: [0.46, 0.92, 0.58, 0.9], scaleX: [0.96, 1.02, 0.98, 1.03] }
-          }
-          transition={
-            reducedMotion
-              ? { duration: 0.26, delay: revealDelays.hologram + 0.12 }
-              : { duration: 1.7, delay: revealDelays.hologram + 0.12, repeat: Infinity, ease: 'easeInOut' }
-          }
-        >
-          <div className="relative h-[62px] w-full max-w-[320px] rounded-[999px] border border-cyan-200/28 bg-gradient-to-r from-transparent via-cyan-200/16 to-transparent shadow-[0_0_32px_rgba(82,244,255,0.28)]" />
-          <div className="absolute left-1/2 top-1/2 h-[22px] w-[236px] -translate-x-1/2 -translate-y-1/2 rounded-[999px] bg-cyan-200/18 blur-[10px]" />
-        </motion.div>
-
-        <motion.div
-          className="pointer-events-none absolute inset-x-0 top-[68%] flex justify-center"
-          initial={{ opacity: 0, scale: 0.75 }}
+          className="pointer-events-none absolute inset-x-0 bottom-[2%] flex flex-col items-center justify-end"
+          initial={{ opacity: 0, scale: 0.8 }}
           animate={
             reducedMotion
               ? { opacity: 1, scale: 1 }
-              : { opacity: [0.4, 0.9, 0.55, 0.95], scale: [0.92, 1.05, 0.98, 1.04] }
+              : { opacity: [0.8, 1, 0.85, 1], scale: [0.99, 1.01, 1, 1.01] }
           }
           transition={
             reducedMotion
-              ? { duration: 0.26, delay: revealDelays.hologram + 0.12 }
-              : { duration: 1.7, delay: revealDelays.hologram + 0.12, repeat: Infinity, ease: 'easeInOut' }
+              ? { duration: 0.3, delay: revealDelays.hologram }
+              : { duration: 2.5, delay: revealDelays.hologram, repeat: Infinity, ease: 'easeInOut' }
           }
         >
-          <div className="h-4 w-4 rounded-full border border-cyan-200/75 bg-cyan-200/30 shadow-[0_0_22px_rgba(120,244,255,0.72)]" />
+          <div className="relative h-[60px] w-[240px]">
+            {/* Bottom Base Layer */}
+            <div className="absolute bottom-0 left-1/2 h-[45px] w-[240px] -translate-x-1/2 rounded-[50%] border border-cyan-800/60 bg-[#020815] shadow-[0_15px_30px_rgba(0,180,255,0.25)]" />
+            
+            {/* Middle Pillar */}
+            <div className="absolute bottom-[16px] left-1/2 h-[30px] w-[230px] -translate-x-1/2 rounded-[50%] border-x-2 border-cyan-500/30 bg-gradient-to-b from-[#061223] to-[#040e1e]" />
+            
+            {/* Top Emitting Surface */}
+            <div className="absolute bottom-[10px] left-1/2 h-[45px] w-[230px] -translate-x-1/2 rounded-[50%] border-2 border-cyan-400/50 bg-[#081a33] shadow-[0_0_40px_rgba(50,220,255,0.4)_inset]" />
+            
+            {/* Inner Ring (Lens) */}
+            <div className="absolute bottom-[28px] left-1/2 h-[35px] w-[190px] -translate-x-1/2 rounded-[50%] border border-cyan-300/80 bg-cyan-900/40" />
+            <div className="absolute bottom-[38px] left-1/2 h-[25px] w-[140px] -translate-x-1/2 rounded-[50%] border border-white/50 bg-cyan-300/20" />
+            
+            {/* Core Light Emitter */}
+            <div className="absolute bottom-[44px] left-1/2 h-[15px] w-[80px] -translate-x-1/2 rounded-[50%] bg-cyan-100 shadow-[0_0_25px_10px_rgba(100,240,255,0.8)] blur-[2px]" />
+            <div className="absolute bottom-[48px] left-1/2 h-[6px] w-[40px] -translate-x-1/2 rounded-[50%] bg-white blur-[1px]" />
+            
+            {/* Ground Reflection */}
+            <div className="absolute -bottom-[20px] left-1/2 h-[20px] w-[280px] -translate-x-1/2 rounded-[50%] bg-[radial-gradient(ellipse_at_center,rgba(56,189,248,0.25)_0%,transparent_70%)] blur-[6px]" />
+          </div>
         </motion.div>
 
+        {/* Floating Text Label */}
         <motion.div
-          className="absolute inset-x-0 top-[52.5%] flex justify-center px-3"
+          className="absolute inset-x-0 top-[25%] flex justify-center px-3"
           initial={reducedMotion ? { opacity: 0 } : { opacity: 0, y: 16, scale: 0.94, filter: 'blur(8px)' }}
           animate={reducedMotion ? { opacity: 1 } : { opacity: 1, y: 0, scale: 1, filter: 'blur(0px)' }}
           transition={{ duration: 0.32, delay: revealDelays.label }}
         >
+          <div className="pointer-events-none absolute left-1/2 top-[56%] h-[122px] w-[360px] -translate-x-1/2 -translate-y-1/2 rounded-full bg-cyan-200/12 blur-[30px]" />
           <motion.h3
             className="max-w-[390px] text-center font-display text-[clamp(2rem,2.3vw,3rem)] leading-[1.06] text-cyan-100"
             style={{ textShadow: '0 0 28px rgba(83, 244, 255, 0.7)' }}
