@@ -537,7 +537,6 @@ export default function ParticleField({ className = '' }: ParticleFieldProps) {
   const activeTextTargetsRef = useRef<HTMLElement[]>([]);
   const [isGlitching, setIsGlitching] = useState(false);
   const rafIdRef = useRef(0);
-  const lastRenderTimeRef = useRef(0);
   const isVisibleRef = useRef(true);
 
   useEffect(() => {

@@ -13,6 +13,11 @@ export default function Footer() {
   const [cursorPos, setCursorPos] = useState({ x: 0, y: 0 });
   const [isHovered, setIsHovered] = useState(false);
 
+  const handleMouseMove = (e: React.MouseEvent<HTMLElement>) => {
+    mouseRef.current = { x: e.clientX, y: e.clientY };
+    setCursorPos(mouseRef.current);
+  };
+
   const socialLinks = [
     { 
       icon: Github, 
@@ -70,6 +75,7 @@ export default function Footer() {
       className="relative w-full py-24 z-[70] neural-footer-layer"
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
+      onMouseMove={handleMouseMove}
     >
       {/* Global neural background from App.tsx flows through */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">

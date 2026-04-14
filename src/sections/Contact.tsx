@@ -2,10 +2,6 @@ import { useRef, useState, useEffect } from 'react';
 import { motion, useReducedMotion, useScroll, useTransform } from 'framer-motion';
 import emailjs from '@emailjs/browser';
 import {
-  ArrowUpRight,
-  Github,
-  Linkedin,
-  Mail,
   Send,
   Zap,
   Code2,
@@ -13,7 +9,6 @@ import {
   Trophy,
   Users,
   MessageCircle,
-  type Icon,
 } from 'lucide-react';
 import TypewriterText from '../components/interactive/TypewriterText';
 import TiltCard from '../components/interactive/TiltCard';
@@ -22,26 +17,6 @@ type ContactForm = {
   email: string;
   message: string;
 };
-const socialLinks = [
-  {
-    label: 'GitHub',
-    href: 'https://github.com/v-suryaprakash',
-    icon: Github,
-    color: 'hover:text-cyan-200',
-  },
-  {
-    label: 'LinkedIn',
-    href: 'https://www.linkedin.com/in/v-suryaprakash',
-    icon: Linkedin,
-    color: 'hover:text-blue-200',
-  },
-  {
-    label: 'Mail',
-    href: 'mailto:v.surya.prakash.2210@gmail.com?subject=Portfolio Inquiry',
-    icon: Mail,
-    color: 'hover:text-emerald-200',
-  },
-] as const;
 const careerHighlights = [
   {
     icon: Code2,
@@ -369,7 +344,7 @@ export default function Contact() {
             </div>
           </div>
           <div className="grid gap-3 sm:grid-cols-2">
-            {careerHighlights.map((item, index) => {
+            {careerHighlights.map((item) => {
               const Icon = item.icon;
               return (
                 <div
