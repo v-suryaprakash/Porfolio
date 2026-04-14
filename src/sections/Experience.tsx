@@ -1,44 +1,33 @@
 import { useRef } from 'react';
 import { motion, useReducedMotion, useScroll, useSpring, useTransform } from 'framer-motion';
-import { Award, BriefcaseBusiness, GraduationCap, Sparkles } from 'lucide-react';
+import { BriefcaseBusiness, GraduationCap, Sparkles } from 'lucide-react';
+import TiltCard from '../components/interactive/TiltCard';
 
 type TimelineEntry = {
   year: string;
   role: string;
   organization: string;
-  type: 'Build' | 'Engineering' | 'Education' | 'Recognition';
+  type: 'Build' | 'Engineering' | 'Education';
   badge: string;
   summary: string;
   bullets: string[];
+  displayYear?: string;
 };
 
 const timelineEntries: TimelineEntry[] = [
   {
-    year: '2026',
-    role: 'Founder Engineer',
-    organization: 'RareLink',
-    type: 'Build',
-    badge: 'RL',
+    year: '2024 - 2028',
+    displayYear: 'Now',
+    role: 'B.Tech AI and Data Science',
+    organization: 'Anna University',
+    type: 'Education',
+    badge: 'AU',
     summary:
-      'Designed a privacy-first collaboration platform connecting patients, researchers, and specialists under a consent-centric architecture.',
+      'Pursuing formal AI and data systems training while shipping real-world products in public repositories.',
     bullets: [
-      'Built synchronized patient-researcher-specialist workflows',
-      'Shaped gateway-driven API architecture for cross-portal consistency',
-      'Focused on trust, data control, and operational clarity',
-    ],
-  },
-  {
-    year: '2026',
-    role: 'Security Framework Developer',
-    organization: 'Ghost Layer',
-    type: 'Engineering',
-    badge: 'GL',
-    summary:
-      'Developed a modular steganographic framework for secure payload hiding across image, audio, GIF, and text carriers.',
-    bullets: [
-      'Implemented layered serializer and protocol design',
-      'Engineered deterministic reveal flows for payload integrity',
-      'Maintained extensible architecture for future carrier engines',
+      'Balancing academic depth with iterative product execution',
+      'Applying course concepts directly into production prototypes',
+      'Building a practical, systems-first engineering mindset',
     ],
   },
   {
@@ -56,31 +45,31 @@ const timelineEntries: TimelineEntry[] = [
     ],
   },
   {
-    year: 'Now',
-    role: 'B.Tech AI and Data Science',
-    organization: 'Anna University',
-    type: 'Education',
-    badge: 'AU',
+    year: '2025',
+    role: 'Security Framework Developer',
+    organization: 'Ghost Layer',
+    type: 'Engineering',
+    badge: 'GL',
     summary:
-      'Pursuing formal AI and data systems training while shipping real-world products in public repositories.',
+      'Developed a modular steganographic framework for secure payload hiding across image, audio, GIF, and text carriers.',
     bullets: [
-      'Balancing academic depth with iterative product execution',
-      'Applying course concepts directly into production prototypes',
-      'Building a practical, systems-first engineering mindset',
+      'Implemented layered serializer and protocol design',
+      'Engineered deterministic reveal flows for payload integrity',
+      'Maintained extensible architecture for future carrier engines',
     ],
   },
   {
     year: '2026',
-    role: 'Consistent Open Source Contributor',
-    organization: 'GitHub Activity',
-    type: 'Recognition',
-    badge: 'GH',
+    role: 'Founder Engineer',
+    organization: 'RareLink',
+    type: 'Build',
+    badge: 'RL',
     summary:
-      'Sustained active contribution rhythm across RareLink, Ghost Layer, and portfolio evolution with visible iteration velocity.',
+      'Designed a privacy-first collaboration platform connecting patients, researchers, and specialists under a consent-centric architecture.',
     bullets: [
-      '37 contributions in the last year on the public profile',
-      'Frequent project refinement and architecture cleanup passes',
-      'Continuous documentation and implementation polishing',
+      'Built synchronized patient-researcher-specialist workflows',
+      'Shaped gateway-driven API architecture for cross-portal consistency',
+      'Focused on trust, data control, and operational clarity',
     ],
   },
 ];
@@ -89,7 +78,6 @@ const typeIconMap = {
   Build: BriefcaseBusiness,
   Engineering: Sparkles,
   Education: GraduationCap,
-  Recognition: Award,
 };
 
 export default function Experience() {
@@ -115,11 +103,11 @@ export default function Experience() {
       id="experience"
       className="relative z-50 w-full min-h-screen overflow-hidden py-24 neural-section-layer-deep"
     >
-      <motion.div
-        aria-hidden="true"
-        className="pointer-events-none absolute -left-20 top-1/3 h-80 w-80 rounded-full bg-cyan-500/10 blur-3xl"
-        style={{ y: ambientY }}
-      />
+          <motion.div
+            aria-hidden="true"
+            className="pointer-events-none absolute -left-20 top-1/3 h-80 w-80 rounded-full bg-cyan-500/10 blur-3xl"
+            style={{ y: ambientY, contain: 'strict' }}
+          />
 
       <div className="relative z-10 mx-auto w-full max-w-6xl px-6 lg:px-10">
         <motion.div
@@ -149,6 +137,7 @@ export default function Experience() {
             {timelineEntries.map((entry, index) => {
               const isLeft = index % 2 === 0;
               const EntryIcon = typeIconMap[entry.type];
+              const isEducation = entry.type === 'Education';
 
               return (
                 <motion.article
@@ -157,51 +146,128 @@ export default function Experience() {
                   initial={
                     reduceMotion
                       ? { opacity: 0 }
-                      : { opacity: 0, x: isLeft ? -90 : 90, rotateY: isLeft ? 12 : -12 }
+                      : { opacity: 0, x: isLeft ? -100 : 100 }
                   }
-                  whileInView={{ opacity: 1, x: 0, rotateY: 0 }}
-                  viewport={{ once: true, amount: 0.35 }}
-                  transition={{ duration: 0.62, ease: [0.16, 1, 0.3, 1] }}
+                  whileInView={{ opacity: 1, x: 0 }}
+                  viewport={{ once: true, amount: 0.3 }}
+                  transition={
+                    reduceMotion
+                      ? { duration: 0.5, delay: index * 0.1 }
+                      : {
+                          type: 'spring',
+                          stiffness: 80,
+                          damping: 20,
+                          mass: 1,
+                          delay: index * 0.1,
+                        }
+                  }
+                  style={{ willChange: 'transform, opacity' }}
                 >
                   <div className={isLeft ? 'lg:pr-14' : 'lg:col-start-2 lg:pl-14'}>
-                    <div className="group relative overflow-hidden rounded-[26px] border border-white/12 bg-[#071224]/85 p-6 shadow-[0_20px_60px_rgba(0,0,0,0.45)]">
-                      <p className="pointer-events-none absolute right-3 top-1 font-display text-7xl text-white/[0.04] md:text-8xl">
-                        {entry.year}
-                      </p>
+                    <TiltCard className="h-full rounded-[26px]" maxTilt={6}>
+                      <div
+                        className={`group relative h-full w-full overflow-hidden rounded-[26px] border p-6 text-left transition-all duration-500 ${
+                          isEducation
+                            ? 'border-cyan-400/30 bg-gradient-to-br from-[#071224]/95 via-[#0a2438]/90 to-[#071224]/95 shadow-[0_0_40px_rgba(0,240,255,0.15)]'
+                            : 'border-white/12 bg-[#071224]/85'
+                        }`}
+                      >
+                        {/* Animated gradient background for Education */}
+                        {isEducation && (
+                          <motion.div
+                            className="pointer-events-none absolute inset-0 opacity-60"
+                            animate={{
+                              background: [
+                                'radial-gradient(circle at 0% 0%, rgba(0,240,255,0.15) 0%, transparent 50%)',
+                                'radial-gradient(circle at 100% 100%, rgba(0,240,255,0.15) 0%, transparent 50%)',
+                                'radial-gradient(circle at 0% 0%, rgba(0,240,255,0.15) 0%, transparent 50%)',
+                              ],
+                            }}
+                            transition={{ duration: 8, repeat: Infinity, ease: 'easeInOut' }}
+                          />
+                        )}
 
-                      <div className="relative z-10">
-                        <div className="flex items-center justify-between gap-3">
-                          <span className="inline-flex items-center gap-2 rounded-full border border-cyan-200/30 bg-cyan-200/10 px-3 py-1 font-mono text-[10px] uppercase tracking-[0.18em] text-cyan-100/90">
-                            <EntryIcon className="h-3.5 w-3.5" />
-                            {entry.type}
-                          </span>
-                          <span className="font-mono text-[11px] uppercase tracking-[0.2em] text-white/45">{entry.year}</span>
+                        {/* Glow effect on hover */}
+                        <div className="pointer-events-none absolute -inset-px rounded-[26px] bg-gradient-to-r from-cyan-400/20 via-cyan-300/10 to-cyan-400/20 opacity-0 transition-opacity duration-500 group-hover:opacity-100" />
+
+                        {/* Background year text */}
+                        <p className="pointer-events-none absolute right-3 top-1 font-display text-7xl text-white/[0.04] md:text-8xl">
+                          {entry.displayYear || entry.year}
+                        </p>
+
+                        <div className="relative z-10">
+                          <div className="flex items-center justify-between gap-3">
+                            <motion.span
+                              className={`inline-flex items-center gap-2 rounded-full border px-3 py-1 font-mono text-[10px] uppercase tracking-[0.18em] ${
+                                isEducation
+                                  ? 'border-cyan-400/50 bg-cyan-400/20 text-cyan-100'
+                                  : 'border-cyan-200/30 bg-cyan-200/10 text-cyan-100/90'
+                              }`}
+                              whileHover={{ scale: 1.05 }}
+                            >
+                              <EntryIcon className="h-3.5 w-3.5" />
+                              {entry.type}
+                            </motion.span>
+                            <span className={`font-mono text-[11px] uppercase tracking-[0.2em] ${isEducation ? 'text-cyan-200' : 'text-white/45'}`}>
+                              {entry.year}
+                            </span>
+                          </div>
+
+                          <motion.h3
+                            className="mt-4 font-display text-2xl text-white"
+                            initial={{ opacity: 0, x: -20 }}
+                            whileInView={{ opacity: 1, x: 0 }}
+                            viewport={{ once: true }}
+                            transition={{ duration: 0.5, delay: 0.1 }}
+                          >
+                            {entry.role}
+                          </motion.h3>
+                          <p className="font-mono text-xs uppercase tracking-[0.16em] text-cyan-200/75">{entry.organization}</p>
+
+                          <p className="mt-4 text-sm leading-relaxed text-white/72">{entry.summary}</p>
+
+                          <ul className="mt-5 space-y-2">
+                            {entry.bullets.map((bullet, bulletIndex) => (
+                              <motion.li
+                                key={bullet}
+                                className="flex items-start gap-2 text-sm text-white/66"
+                                initial={{ opacity: 0, x: -10 }}
+                                whileInView={{ opacity: 1, x: 0 }}
+                                viewport={{ once: true }}
+                                transition={{ duration: 0.4, delay: 0.2 + bulletIndex * 0.1 }}
+                              >
+                                <span className={`mt-1.5 inline-block h-1.5 w-1.5 rounded-full ${isEducation ? 'bg-cyan-400' : 'bg-cyan-300/80'}`} />
+                                <span>{bullet}</span>
+                              </motion.li>
+                            ))}
+                          </ul>
                         </div>
 
-                        <h3 className="mt-4 font-display text-2xl text-white">{entry.role}</h3>
-                        <p className="font-mono text-xs uppercase tracking-[0.16em] text-cyan-200/75">{entry.organization}</p>
-
-                        <p className="mt-4 text-sm leading-relaxed text-white/72">{entry.summary}</p>
-
-                        <ul className="mt-5 space-y-2">
-                          {entry.bullets.map((bullet) => (
-                            <li key={bullet} className="flex items-start gap-2 text-sm text-white/66">
-                              <span className="mt-1.5 inline-block h-1.5 w-1.5 rounded-full bg-cyan-300/80" />
-                              <span>{bullet}</span>
-                            </li>
-                          ))}
-                        </ul>
+                        {/* Border glow on hover */}
+                        <div className="pointer-events-none absolute inset-0 rounded-[26px] opacity-0 transition-opacity duration-500 group-hover:opacity-100">
+                          <div className="absolute inset-0 rounded-[26px] border border-cyan-300/30" />
+                        </div>
                       </div>
-                    </div>
+                    </TiltCard>
                   </div>
 
                   <div className="pointer-events-none absolute left-1/2 top-8 hidden -translate-x-1/2 lg:block">
-                    <div className="group/anchor pointer-events-auto relative flex h-12 w-12 items-center justify-center rounded-full border border-cyan-200/45 bg-[#051224] shadow-[0_0_18px_rgba(0,240,255,0.45)]">
-                      <span className="font-mono text-xs uppercase tracking-[0.16em] text-cyan-100">{entry.badge}</span>
+                    <motion.div
+                      className={`group/anchor pointer-events-auto relative flex h-12 w-12 items-center justify-center rounded-full border shadow-[0_0_18px_rgba(0,240,255,0.45)] ${
+                        isEducation
+                          ? 'border-cyan-400/60 bg-[#051224] shadow-[0_0_30px_rgba(0,240,255,0.6)]'
+                          : 'border-cyan-200/45 bg-[#051224]'
+                      }`}
+                      whileHover={{ scale: 1.15 }}
+                      transition={{ type: 'spring', stiffness: 300 }}
+                    >
+                      <span className={`font-mono text-xs uppercase tracking-[0.16em] ${isEducation ? 'text-cyan-300' : 'text-cyan-100'}`}>
+                        {entry.badge}
+                      </span>
                       <div className="absolute left-1/2 top-14 w-max -translate-x-1/2 rounded-lg border border-white/12 bg-[#071224]/95 px-3 py-2 text-[11px] text-white/75 opacity-0 transition-opacity duration-250 group-hover/anchor:opacity-100">
                         {entry.organization}
                       </div>
-                    </div>
+                    </motion.div>
                   </div>
                 </motion.article>
               );

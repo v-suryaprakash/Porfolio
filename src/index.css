@@ -343,8 +343,10 @@
   position: relative;
 }
 
+/* Glitch effect on content only, NOT on background canvas */
 .neural-glitch-active canvas {
-  animation: neural-glitch-jitter 140ms steps(2, end) 1;
+  /* Background canvas should not be affected by glitch */
+  /* Keep visual effects but remove jitter that causes restart perception */
   filter: saturate(1.08) contrast(1.04) hue-rotate(1deg);
 }
 
@@ -488,4 +490,27 @@ input:focus, textarea:focus {
 
 .pin-spacer > * {
   pointer-events: auto !important;
+}
+
+/* Custom scrollbar styles for Experience section */
+.scrollbar-thin {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(0, 240, 255, 0.2) transparent;
+}
+
+.scrollbar-thin::-webkit-scrollbar {
+  width: 4px;
+}
+
+.scrollbar-thin::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.scrollbar-thin::-webkit-scrollbar-thumb {
+  background-color: rgba(0, 240, 255, 0.2);
+  border-radius: 20px;
+}
+
+.scrollbar-thin::-webkit-scrollbar-thumb:hover {
+  background-color: rgba(0, 240, 255, 0.4);
 }

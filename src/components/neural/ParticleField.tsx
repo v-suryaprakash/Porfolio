@@ -209,7 +209,7 @@ function createThreads(
   const maxLinkDistance = Math.min(Math.max(width, height) * 0.28, 260);
 
   for (let i = 0; i < threadCount; i++) {
-    const chainSize = 2 + Math.floor(Math.random() * 3); // 2, 3, or 4 particles
+    const chainSize = 2 + Math.floor(Math.random() * 3);
     const startIndex = Math.floor(Math.random() * particles.length);
     const nodeIndices = [startIndex];
     const used = new Set<number>(nodeIndices);
@@ -519,19 +519,9 @@ function drawScene(
     }
   }
 
-  if (glitchAmount > 0.14) {
-    ctx.globalCompositeOperation = 'screen';
-    const stripeCount = Math.floor(2 + glitchAmount * 8);
-
-    for (let i = 0; i < stripeCount; i++) {
-      const y = Math.random() * height;
-      const stripeHeight = randomBetween(1, 3.5) * (1 + glitchAmount * 1.6);
-      const horizontalShift = (Math.random() - 0.5) * width * 0.14 * glitchAmount;
-
-      ctx.fillStyle = `rgba(128, 248, 255, ${0.07 + glitchAmount * 0.12})`;
-      ctx.fillRect(horizontalShift, y, width, stripeHeight);
-    }
-  }
+  // Glitch visual effects on content only - NOT on background canvas
+  // Removed canvas stripe drawing that caused background blanking
+  // Text glitch effects still apply via triggerTextGlitch function
 
   ctx.restore();
 }
@@ -546,6 +536,9 @@ export default function ParticleField({ className = '' }: ParticleFieldProps) {
   const textRestoreTimersRef = useRef<number[]>([]);
   const activeTextTargetsRef = useRef<HTMLElement[]>([]);
   const [isGlitching, setIsGlitching] = useState(false);
+  const rafIdRef = useRef(0);
+  const lastRenderTimeRef = useRef(0);
+  const isVisibleRef = useRef(true);
 
   useEffect(() => {
     const canvas = canvasRef.current;
@@ -557,7 +550,6 @@ export default function ParticleField({ className = '' }: ParticleFieldProps) {
     const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     const qualityProfile = getRenderQualityProfile(reducedMotion);
 
-    let rafId = 0;
     let width = window.innerWidth;
     let height = window.innerHeight;
     let particles: Particle[] = [];
@@ -567,12 +559,9 @@ export default function ParticleField({ className = '' }: ParticleFieldProps) {
     let introAlpha = 0;
     let revealAmount = 0;
     let revealTarget = 0;
-    let revealFadeInStart = height * 0.12;
-    let revealFadeInEnd = height * 1.06;
     let scrollDepthFactor = 0;
     let clearedWhenHidden = false;
-    let scrollRafId = 0;
-    let isDocumentVisible = !document.hidden;
+
     const clearTextGlitchTargets = () => {
       for (let index = 0; index < textRestoreTimersRef.current.length; index++) {
         window.clearTimeout(textRestoreTimersRef.current[index]);
@@ -643,15 +632,16 @@ export default function ParticleField({ className = '' }: ParticleFieldProps) {
           return false;
         }
 
-        const text = (element.textContent ?? '').trim();
-        return text.length >= 8 && text.length <= 120;
+    const text = (element.textContent ?? '').trim();
+      return text.length >= 3 && text.length <= 120;
       });
 
-      if (candidates.length === 0) {
-        return;
-      }
+    if (candidates.length === 0) {
+      return;
+    }
 
-      const maxTargets = Math.min(candidates.length, Math.max(1, Math.floor(1 + intensity * 1.1)));
+    // Increase number of words affected by glitch - random words, not entire lines
+    const maxTargets = Math.min(candidates.length, Math.max(2, Math.floor(3 + intensity * 4)));
       const usedIndexes = new Set<number>();
 
       for (let pick = 0; pick < maxTargets; pick++) {
@@ -696,11 +686,12 @@ export default function ParticleField({ className = '' }: ParticleFieldProps) {
       }
     };
 
-
     const hasFinePointer = window.matchMedia('(pointer: fine)').matches;
 
     const updateRevealTarget = () => {
       const scrollY = window.scrollY || window.pageYOffset || 0;
+      const revealFadeInStart = height * 0.12;
+      const revealFadeInEnd = height * 1.06;
       const fadeInRange = Math.max(1, revealFadeInEnd - revealFadeInStart);
       const fadeIn = clamp((scrollY - revealFadeInStart) / fadeInRange, 0, 1);
 
@@ -708,6 +699,7 @@ export default function ParticleField({ className = '' }: ParticleFieldProps) {
       scrollDepthFactor = clamp((scrollY - height * 2.2) / (height * 5.2), 0, 1);
     };
 
+    let scrollRafId = 0;
     const onScroll = () => {
       if (scrollRafId) return;
 
@@ -724,8 +716,8 @@ export default function ParticleField({ className = '' }: ParticleFieldProps) {
       const maxDpr = qualityProfile.particleScale < 0.65
         ? 1.12
         : qualityProfile.particleScale < 0.82
-          ? 1.24
-          : 1.36;
+        ? 1.24
+        : 1.36;
       const dpr = clamp(window.devicePixelRatio || 1, 1, maxDpr);
       canvas.width = Math.floor(width * dpr);
       canvas.height = Math.floor(height * dpr);
@@ -733,8 +725,6 @@ export default function ParticleField({ className = '' }: ParticleFieldProps) {
       canvas.style.height = `${height}px`;
       context.setTransform(dpr, 0, 0, dpr, 0, 0);
 
-      revealFadeInStart = height * 0.12;
-      revealFadeInEnd = height * 1.06;
       updateRevealTarget();
 
       ambientGradient = context.createRadialGradient(
@@ -802,9 +792,9 @@ export default function ParticleField({ className = '' }: ParticleFieldProps) {
     };
 
     const onVisibilityChange = () => {
-      isDocumentVisible = !document.hidden;
+      isVisibleRef.current = !document.hidden;
 
-      if (isDocumentVisible) {
+      if (isVisibleRef.current) {
         lastRenderAt = performance.now();
       } else {
         setIsGlitching(false);
@@ -813,17 +803,18 @@ export default function ParticleField({ className = '' }: ParticleFieldProps) {
     };
 
     const animate = (timestamp: number) => {
-      if (!isDocumentVisible) {
+      if (!isVisibleRef.current) {
         lastRenderAt = timestamp;
-        rafId = window.requestAnimationFrame(animate);
+        rafIdRef.current = window.requestAnimationFrame(animate);
         return;
       }
 
+      // Throttle to target frame rate
       const elapsedSinceRender = timestamp - lastRenderAt;
       const frameBudget = qualityProfile.targetFrameMs + scrollDepthFactor * 8;
 
       if (elapsedSinceRender < frameBudget) {
-        rafId = window.requestAnimationFrame(animate);
+        rafIdRef.current = window.requestAnimationFrame(animate);
         return;
       }
 
@@ -844,7 +835,7 @@ export default function ParticleField({ className = '' }: ParticleFieldProps) {
           clearedWhenHidden = true;
         }
 
-        rafId = window.requestAnimationFrame(animate);
+        rafIdRef.current = window.requestAnimationFrame(animate);
         return;
       }
 
@@ -875,7 +866,7 @@ export default function ParticleField({ className = '' }: ParticleFieldProps) {
         effectiveReveal
       );
 
-      rafId = window.requestAnimationFrame(animate);
+      rafIdRef.current = window.requestAnimationFrame(animate);
     };
 
     resizeCanvas();
@@ -891,7 +882,7 @@ export default function ParticleField({ className = '' }: ParticleFieldProps) {
       }, 15000);
     }
 
-    rafId = window.requestAnimationFrame(animate);
+    rafIdRef.current = window.requestAnimationFrame(animate);
 
     window.addEventListener('scroll', onScroll, { passive: true });
     window.addEventListener('resize', resizeCanvas);
@@ -904,7 +895,7 @@ export default function ParticleField({ className = '' }: ParticleFieldProps) {
     }
 
     return () => {
-      window.cancelAnimationFrame(rafId);
+      window.cancelAnimationFrame(rafIdRef.current);
 
       if (scrollRafId) {
         window.cancelAnimationFrame(scrollRafId);
@@ -935,9 +926,9 @@ export default function ParticleField({ className = '' }: ParticleFieldProps) {
   return (
     <div
       className={`absolute inset-0 ${className} ${isGlitching ? 'neural-glitch-active' : ''}`}
-      style={{ zIndex: 0 }}
+      style={{ zIndex: 0, contain: 'strict', willChange: 'transform' }}
     >
-      <canvas ref={canvasRef} className="w-full h-full" aria-hidden="true" />
+      <canvas ref={canvasRef} className="h-full w-full" aria-hidden="true" />
     </div>
   );
 }
