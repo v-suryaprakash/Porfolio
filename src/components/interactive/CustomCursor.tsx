@@ -26,7 +26,10 @@ export default function CustomCursor() {
     const coarsePointer = window.matchMedia('(pointer: coarse)').matches;
     if (coarsePointer) return;
 
-    setIsEnabled(true);
+    // Use requestAnimationFrame to avoid setState during render phase
+    requestAnimationFrame(() => {
+      setIsEnabled(true);
+    });
     document.body.classList.add('custom-cursor-enabled');
 
     const target = {

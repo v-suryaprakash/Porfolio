@@ -569,13 +569,6 @@ export default function ParticleField({ className = '' }: ParticleFieldProps) {
 
       for (let index = 0; index < activeTextTargetsRef.current.length; index++) {
         const target = activeTextTargetsRef.current[index];
-        const originalText = target.dataset.neuralGlitchOriginal;
-
-        if (originalText !== undefined) {
-          target.textContent = originalText;
-          delete target.dataset.neuralGlitchOriginal;
-        }
-
         target.classList.remove('neural-text-glitch-active');
         target.removeAttribute('data-neural-glitch');
       }
@@ -631,16 +624,17 @@ export default function ParticleField({ className = '' }: ParticleFieldProps) {
           return false;
         }
 
-    const text = (element.textContent ?? '').trim();
-      return text.length >= 3 && text.length <= 120;
+        const text = (element.textContent ?? '').trim();
+        return text.length >= 3 && text.length <= 120;
       });
 
-    if (candidates.length === 0) {
-      return;
-    }
+      if (candidates.length === 0) {
+        return;
+      }
 
-    // Increase number of words affected by glitch - random words, not entire lines
-    const maxTargets = Math.min(candidates.length, Math.max(2, Math.floor(3 + intensity * 4)));
+      // Increase number of words affected by glitch - random words, not entire lines.
+      // Keep DOM ownership with React by only using CSS data attributes for visual glitch.
+      const maxTargets = Math.min(candidates.length, Math.max(2, Math.floor(3 + intensity * 4)));
       const usedIndexes = new Set<number>();
 
       for (let pick = 0; pick < maxTargets; pick++) {
@@ -662,20 +656,12 @@ export default function ParticleField({ className = '' }: ParticleFieldProps) {
           continue;
         }
 
-        target.dataset.neuralGlitchOriginal = originalText;
         target.setAttribute('data-neural-glitch', glitchedText);
-        target.textContent = glitchedText;
         target.classList.add('neural-text-glitch-active');
         activeTextTargetsRef.current.push(target);
 
         const restoreTimer = window.setTimeout(() => {
           if (!target.isConnected) return;
-
-          const savedOriginal = target.dataset.neuralGlitchOriginal;
-          if (savedOriginal !== undefined) {
-            target.textContent = savedOriginal;
-            delete target.dataset.neuralGlitchOriginal;
-          }
 
           target.classList.remove('neural-text-glitch-active');
           target.removeAttribute('data-neural-glitch');

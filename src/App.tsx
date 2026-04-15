@@ -212,11 +212,11 @@ function App() {
       <main ref={mainRef} className="relative z-10">
         <Hero />
         {isSectionReady(0) ? (
-          <Suspense fallback={<SectionFallback id="about" className="relative w-full h-screen overflow-hidden z-20 neural-section-layer-strong" />}>
+          <Suspense fallback={<SectionFallback id="about" className="relative w-full min-h-screen z-20 neural-section-layer-strong" />}>
             <About />
           </Suspense>
         ) : (
-          <SectionFallback id="about" className="relative w-full h-screen overflow-hidden z-20 neural-section-layer-strong" />
+          <SectionFallback id="about" className="relative w-full min-h-screen z-20 neural-section-layer-strong" />
         )}
 
         {isSectionReady(1) ? (

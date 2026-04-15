@@ -80,12 +80,16 @@ export default function Contact() {
     event.preventDefault();
     setIsSubmitting(true);
     setErrorMessage(null);
+
+    // EmailJS template parameters - must match template variables exactly
     const templateParams = {
-      from_name: formData.name,
-      from_email: formData.email,
+      user_name: formData.name,
+      user_email: formData.email,
       message: formData.message,
-      to_email: 'v.surya.prakash.2210@gmail.com',
+      reply_to: formData.email, // Important: This sets the reply-to address
+      to_name: 'Surya Prakash',
     };
+
     try {
       const result = await emailjs.send(
         import.meta.env.VITE_EMAILJS_SERVICE_ID || '',

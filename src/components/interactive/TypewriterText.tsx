@@ -21,7 +21,10 @@ export default function TypewriterText({
 
   useEffect(() => {
     if (reduceMotion) {
-      setCharCount(text.length);
+      // Use requestAnimationFrame to avoid setState during render
+      requestAnimationFrame(() => {
+        setCharCount(text.length);
+      });
       return;
     }
 

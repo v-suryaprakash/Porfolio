@@ -108,14 +108,14 @@ export default function Footer() {
         </p>
 
         {/* Social Links - Square with curved edges, icon tilts right on hover */}
-        <div className="flex justify-center gap-4 mb-12">
+        <div ref={socialRef} className="flex justify-center gap-10 mb-12">
           {socialLinks.map((link) => (
             <a
               key={link.label}
               href={link.href}
               target="_blank"
               rel="noopener noreferrer"
-              className="w-12 h-12 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center hover:border-cyan-400/50 hover:bg-cyan-400/10 transition-all group"
+              className="w-40 h-12 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center hover:border-cyan-400/50 hover:bg-cyan-400/10 transition-all group"
               aria-label={link.label}
               onClick={(e) => handleButtonClick(e, link.href)}
               onMouseEnter={(e) => {
