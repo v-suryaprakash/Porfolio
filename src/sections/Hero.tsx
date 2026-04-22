@@ -1,210 +1,352 @@
-import { useEffect, useRef, useState } from 'react';
-import { gsap } from 'gsap';
-import { CoreNode, TextDecode } from '../components/neural';
-import { siteConfig } from '../config';
+import { useEffect, useRef, useState, useCallback } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { 
+  Cpu, 
+  Zap, 
+  Radio, 
+  Activity,
+  Database,
+  GitBranch,
+  Eye,
+  ChevronRight,
+  Command,
+  Layers,
+  Folder,
+  Code,
+  Terminal
+} from 'lucide-react';
+
+const BOOT_SEQUENCE = [
+  'Initializing neural interface...',
+  'Loading identity matrix...',
+  'SURYA_PRAKASH.V protocol activated',
+  'System online and ready',
+];
+
+const SYSTEM_LOGS = [
+  'Core temperature: 36.8°C',
+  'Neural activity: 98.7%',
+  'Memory allocation: 3.2GB/16GB',
+  'Blockchain sync: Complete',
+  'Security firewall: Active',
+];
+
+const DATA_STREAM = '101100111010111010010111010101101010010111010101001010101010111010101010111010101010101010101010101010101010101010';
+
+const COMMANDS = [
+  { cmd: 'whoami', desc: 'Who am I?', icon: Eye },
+  { cmd: 'ls projects', desc: 'View projects', icon: Folder },
+  { cmd: 'git status', desc: 'Current work', icon: GitBranch },
+  { cmd: 'cat skills', desc: 'Technical skills', icon: Code },
+];
+
+const PARTICLES = Array.from({ length: 30 }, (_, i) => ({
+  id: i,
+  x: Math.random() * 100,
+  y: Math.random() * 100,
+  size: Math.random() * 4 + 1,
+  delay: Math.random() * 5,
+}));
 
 export default function Hero() {
   const sectionRef = useRef<HTMLElement>(null);
-  const contentRef = useRef<HTMLDivElement>(null);
-  const coreRef = useRef<HTMLDivElement>(null);
-  const headlineRef = useRef<HTMLDivElement>(null);
-  const taglineRef = useRef<HTMLDivElement>(null);
-  const ctaRef = useRef<HTMLDivElement>(null);
-  const microLabelsRef = useRef<HTMLDivElement>(null);
+  const [bootIndex, setBootIndex] = useState(0);
+  const [currentLog, setCurrentLog] = useState(0);
+  const [activeCommand, setActiveCommand] = useState<number | null>(null);
+  const [cursorPos, setCursorPos] = useState(0);
+  const [bootComplete, setBootComplete] = useState(false);
+  const [isGlitching, setIsGlitching] = useState(false);
 
-  const [showContent, setShowContent] = useState(false);
-  const [initText, setInitText] = useState('Initializing Neural Interface...');
-
-  // Initial load animation sequence
+  // Boot sequence
   useEffect(() => {
-    const tl = gsap.timeline({ delay: 0.2 });
-
-    // Initialization text sequence
-    tl.to({}, { duration: 0.4, onComplete: () => setInitText('Identity Recognized: SURYA PRAKASH') })
-      .to({}, { duration: 0.4, onComplete: () => setInitText('System Online') })
-      .to({}, {
-        duration: 0.25,
-        onComplete: () => {
-          setShowContent(true);
-          gsap.to('.init-text', { opacity: 0, duration: 0.3 });
-        },
+    const bootInterval = setInterval(() => {
+      setBootIndex(i => {
+        if (i < BOOT_SEQUENCE.length - 1) {
+          return i + 1;
+        } else {
+          clearInterval(bootInterval);
+          setTimeout(() => setBootComplete(true), 1000);
+          return i;
+        }
       });
-
-    return () => {
-      tl.kill();
-    };
+    }, 800);
+    return () => clearInterval(bootInterval);
   }, []);
 
-  // Content entrance animation
+  // System logs
   useEffect(() => {
-    if (!showContent) return;
+    const logInterval = setInterval(() => {
+      setCurrentLog(i => (i + 1) % SYSTEM_LOGS.length);
+    }, 3000);
+    return () => clearInterval(logInterval);
+  }, []);
 
-    const ctx = gsap.context(() => {
-      const tl = gsap.timeline();
-
-      // Core node entrance
-      tl.fromTo(
-        coreRef.current,
-        { scale: 0.2, opacity: 0, rotation: -90 },
-        { scale: 1, opacity: 1, rotation: 0, duration: 1, ease: 'power3.out' }
-      );
-
-      // Headline entrance
-      tl.fromTo(
-        headlineRef.current,
-        { y: 30, opacity: 0 },
-        { y: 0, opacity: 1, duration: 0.8, ease: 'power3.out' },
-        '-=0.5'
-      );
-
-      // Tagline entrance
-      tl.fromTo(
-        taglineRef.current,
-        { y: 20, opacity: 0 },
-        { y: 0, opacity: 1, duration: 0.6, ease: 'power3.out' },
-        '-=0.4'
-      );
-
-      // CTA entrance
-      tl.fromTo(
-        ctaRef.current,
-        { y: 20, opacity: 0 },
-        { y: 0, opacity: 1, duration: 0.6, ease: 'power3.out' },
-        '-=0.3'
-      );
-
-      // Micro labels entrance
-      tl.fromTo(
-        microLabelsRef.current,
-        { opacity: 0 },
-        { opacity: 1, duration: 0.5 },
-        '-=0.3'
-      );
-    }, sectionRef);
-
-    return () => ctx.revert();
-  }, [showContent]);
-
-  const scrollToAbout = () => {
-    const aboutSection = document.getElementById('about');
-    if (!aboutSection) return;
-
-    window.dispatchEvent(new CustomEvent('neural-nav-target', { detail: { id: 'about' } }));
-
-    const targetY = aboutSection.getBoundingClientRect().top + window.scrollY;
-    const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-
-    window.scrollTo({
-      top: targetY,
-      behavior: reduceMotion ? 'auto' : 'smooth',
-    });
+  // Command typing
+  const handleCommandClick = (cmd: string, index: number) => {
+    setActiveCommand(index);
+    setCursorPos(0);
+    
+    let char = 0;
+    const typeInterval = setInterval(() => {
+      char++;
+      setCursorPos(char);
+      if (char >= cmd.length) {
+        clearInterval(typeInterval);
+        setTimeout(() => {
+          setActiveCommand(null);
+        }, 1500);
+      }
+    }, 50);
   };
+
+  // Glitch effect
+  useEffect(() => {
+    const interval = setInterval(() => {
+      if (Math.random() > 0.8) {
+        setIsGlitching(true);
+        setTimeout(() => setIsGlitching(false), 150);
+      }
+    }, 6000);
+    return () => clearInterval(interval);
+  }, []);
 
   return (
     <section
       ref={sectionRef}
       id="hero"
-      className="relative w-full h-screen overflow-hidden"
-      style={{ background: 'linear-gradient(180deg, #020617 0%, #0A192F 50%, #020617 100%)' }}
+      className="relative z-10 w-full min-h-screen overflow-hidden neural-section-layer-strong"
     >
-      {/* Initialization text overlay */}
-      {!showContent && (
-        <div className="init-text absolute inset-0 flex items-center justify-center z-30">
-          <p className="font-mono text-cyan-400 text-lg tracking-wider animate-pulse">
-            {initText}
-          </p>
-        </div>
-      )}
+      {/* Background Particles */}
+      <div className="absolute inset-0 overflow-hidden pointer-events-none">
+        {PARTICLES.map((p) => (
+          <motion.div
+            key={p.id}
+            className="absolute rounded-full bg-cyan-400/20"
+            style={{
+              left: `${p.x}%`,
+              top: `${p.y}%`,
+              width: p.size,
+              height: p.size,
+            }}
+            animate={{
+              y: [0, -40, 0],
+              opacity: [0.2, 0.5, 0.2],
+            }}
+            transition={{
+              duration: 8 + p.delay,
+              repeat: Infinity,
+              delay: p.delay,
+            }}
+          />
+        ))}
+      </div>
 
-      {/* Content */}
-      {showContent && (
-        <div ref={contentRef} className="relative z-20 w-full h-full flex flex-col items-center justify-center">
-          {/* Core Node */}
-          <div ref={coreRef} className="absolute neural-anim-target" style={{ top: '42%', left: '50%', transform: 'translate(-50%, -50%)' }}>
-            <CoreNode size={220} onClick={scrollToAbout} />
+      {/* Ambient glows */}
+      <div className="pointer-events-none absolute -left-64 top-1/4 h-[600px] w-[600px] rounded-full bg-cyan-400/8 blur-3xl" />
+      <div className="pointer-events-none absolute -right-64 bottom-1/4 h-[700px] w-[700px] rounded-full bg-purple-500/5 blur-3xl" />
+
+      <div className="relative z-20 mx-auto w-full max-w-7xl px-6 lg:px-10 py-24">
+        
+        {/* System Status */}
+        <motion.div 
+          className="flex items-center justify-between mb-8 border-b border-white/10 pb-4"
+          initial={{ opacity: 0, y: -20 }}
+          animate={{ opacity: 1, y: 0 }}
+        >
+          <div className="flex items-center gap-3">
+            <Radio className="w-5 h-5 text-cyan-400 animate-pulse" />
+            <span className="font-mono text-xs text-cyan-300/70 uppercase">SYSTEM ONLINE</span>
           </div>
-
-          {/* Headline */}
-          <div
-            ref={headlineRef}
-            className="absolute text-center neural-anim-target"
-            style={{ top: '58%', left: '50%', transform: 'translateX(-50%)' }}
-          >
-            <h1 className="font-display text-[clamp(36px,6vw,84px)] text-white tracking-tight leading-none">
-              <TextDecode text="SURYA PRAKASH" delay={200} duration={1200} />
-            </h1>
-          </div>
-
-          {/* Tagline */}
-          <div
-            ref={taglineRef}
-            className="absolute text-center neural-anim-target"
-            style={{ top: '68%', left: '50%', transform: 'translateX(-50%)' }}
-          >
-            <p className="font-mono text-sm md:text-base text-cyan-300/80 tracking-[0.2em] uppercase">
-              AI Innovator · Stack Engineer · Product Builder
-            </p>
-            <p className="font-mono text-xs text-white/50 mt-2 tracking-wider">
-              Building the future by blending AI innovation with strong engineering.
-            </p>
-          </div>
-
-          {/* CTA Buttons */}
-          <div
-            ref={ctaRef}
-            className="absolute flex gap-4 neural-anim-target"
-            style={{ top: '78%', left: '50%', transform: 'translateX(-50%)' }}
-          >
-            <button
-              onClick={scrollToAbout}
-              className="group relative px-8 py-3 border border-cyan-400/50 text-cyan-400 font-mono text-sm uppercase tracking-wider rounded-full overflow-hidden transition-all duration-300 hover:border-cyan-400 hover:text-white"
+          <AnimatePresence mode="wait">
+            <motion.div
+              key={currentLog}
+              className="flex items-center gap-2"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
             >
-              <span className="relative z-10">Enter System</span>
-              <div className="absolute inset-0 bg-cyan-400/10 transform scale-x-0 group-hover:scale-x-100 transition-transform origin-left duration-300" />
-            </button>
-            <button
-              onClick={() => window.open(siteConfig.cvUrl || '#', '_blank')}
-              className="px-8 py-3 border border-white/20 text-white/70 font-mono text-sm uppercase tracking-wider rounded-full transition-all duration-300 hover:border-white/40 hover:text-white"
+              <Activity className="w-4 h-4 text-green-400" />
+              <span className="font-mono text-xs text-green-400">{SYSTEM_LOGS[currentLog]}</span>
+            </motion.div>
+          </AnimatePresence>
+        </motion.div>
+
+        {/* Boot Sequence */}
+        {!bootComplete && (
+          <motion.div className="mb-8 rounded-xl border border-cyan-400/20 bg-cyan-400/5 p-4">
+            <div className="flex items-center gap-2 mb-3">
+              <Terminal className="w-4 h-4 text-cyan-400" />
+              <span className="font-mono text-xs text-cyan-300/70">Boot Sequence</span>
+            </div>
+            <div className="font-mono text-sm text-white">
+              {BOOT_SEQUENCE[bootIndex]}
+              <span className="inline-block w-2 h-4 bg-cyan-400 ml-1 animate-pulse" />
+            </div>
+          </motion.div>
+        )}
+
+        {/* Main Content */}
+        <AnimatePresence>
+          {bootComplete && (
+            <motion.div
+              initial={{ opacity: 0, scale: 0.95 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ duration: 0.8 }}
             >
-              Download CV
-            </button>
-          </div>
+              <div className="grid lg:grid-cols-2 gap-12 items-center min-h-[60vh]">
+                
+                {/* Left Column */}
+                <div className="space-y-6">
+                  {/* Name: SURYA PRAKASH.V */}
+                  <motion.h1 
+                    className="font-display text-5xl lg:text-7xl text-white tracking-tight leading-none"
+                  >
+                    {['S','U','R','Y','A',' ','P','R','A','K','A','S','H','.','V'].map((char, i) => (
+                      <motion.span
+                        key={i}
+                        className="inline-block"
+                        initial={{ opacity: 0, y: 50 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ delay: 0.1 + i * 0.05 }}
+                        whileHover={{ scale: 1.3, color: '#22d3ee', rotateY: 180 }}
+                      >
+                        {char === '.' ? (
+                          <span className="text-cyan-400">.</span>
+                        ) : (
+                          char
+                        )}
+                      </motion.span>
+                    ))}
+                  </motion.h1>
 
-          {/* Micro Labels */}
-          <div ref={microLabelsRef} className="absolute inset-0 pointer-events-none">
-            {/* Top left */}
-            <div className="absolute top-8 left-8">
-              <p className="font-mono text-xs text-white/40 uppercase tracking-wider">Neural Interface v2.7</p>
-            </div>
+                  {/* Command Prompt */}
+                  <motion.div 
+                    className="rounded-xl border border-cyan-400/20 bg-black/50 p-4"
+                    initial={{ opacity: 0, x: -30 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{ delay: 0.8 }}
+                  >
+                    <div className="flex items-center gap-2 mb-3">
+                      <Command className="w-4 h-4 text-cyan-400" />
+                      <span className="font-mono text-xs text-white/40">system:~$</span>
+                    </div>
+                    
+                    <div className="space-y-2 font-mono text-sm">
+                      {COMMANDS.map((cmd, i) => (
+                        <motion.div 
+                          key={cmd.cmd}
+                          className="flex items-center gap-3 cursor-pointer hover:bg-cyan-400/10 rounded p-1"
+                          onClick={() => handleCommandClick(cmd.cmd, i)}
+                          initial={{ opacity: 0, x: -20 }}
+                          animate={{ opacity: 1, x: 0 }}
+                          transition={{ delay: 1 + i * 0.1 }}
+                        >
+                          <ChevronRight className="w-4 h-4 text-cyan-400" />
+                          <code className={activeCommand === i ? 'text-cyan-300' : 'text-white/60'}>
+                            {activeCommand === i ? cmd.cmd.substring(0, cursorPos) : cmd.cmd}
+                          </code>
+                          <span className="text-white/40 text-xs">// {cmd.desc}</span>
+                          <cmd.icon className="w-4 h-4 text-white/30 ml-auto" />
+                        </motion.div>
+                      ))}
+                    </div>
+                  </motion.div>
 
-            {/* Top right */}
-            <div className="absolute top-8 right-8 text-right">
-              <p className="font-mono text-xs text-white/40 uppercase tracking-wider">Status</p>
-              <p className="font-mono text-xs text-cyan-400 flex items-center justify-end gap-2">
-                <span className="w-2 h-2 bg-cyan-400 rounded-full animate-pulse" />
-                ONLINE
-              </p>
-            </div>
+                  {/* Data Feed */}
+                  <motion.div 
+                    className="rounded-xl border border-purple-400/20 bg-purple-400/5 p-4"
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    transition={{ delay: 1.2 }}
+                  >
+                    <div className="flex items-center gap-2 mb-2">
+                      <Database className="w-4 h-4 text-purple-400" />
+                      <span className="font-mono text-xs text-purple-300/70">Live Feed</span>
+                    </div>
+                    <div className="font-mono text-[11px] text-white/50 overflow-hidden">
+                      <motion.div 
+                        animate={{ x: [0, -100] }}
+                        transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
+                        style={{ width: '200%' }}
+                      >
+                        {DATA_STREAM}
+                      </motion.div>
+                    </div>
+                  </motion.div>
+                </div>
 
-            {/* Bottom left */}
-            <div className="absolute bottom-8 left-8">
-              <p className="font-mono text-xs text-white/40 uppercase tracking-wider">Location</p>
-              <p className="font-mono text-xs text-white/60">Bangalore, IN</p>
-            </div>
+                {/* Right Column */}
+                <div className="flex flex-col items-center justify-center">
+                  {/* Neural Core */}
+                  <motion.div
+                    className="relative mb-8"
+                    initial={{ scale: 0, rotate: 180 }}
+                    animate={{ scale: 1, rotate: 0 }}
+                    transition={{ delay: 1.5, type: 'spring', stiffness: 100 }}
+                  >
+                    {[0, 1, 2].map((i) => (
+                      <motion.div
+                        key={i}
+                        className="absolute rounded-full border border-cyan-400/20"
+                        style={{ 
+                          width: 200 + i * 40, 
+                          height: 200 + i * 40, 
+                          left: -100 - i * 20, 
+                          top: -100 - i * 20 
+                        }}
+                        animate={{ rotate: 360 }}
+                        transition={{ duration: 20 + i * 5, repeat: Infinity, ease: "linear" }}
+                      />
+                    ))}
+                    
+                    <Cpu className="w-24 h-24 text-cyan-400 relative z-10" />
+                    
+                    {[0, 1, 2, 3].map((i) => (
+                      <motion.div
+                        key={i}
+                        className="absolute rounded-full border border-cyan-400/30"
+                        style={{ 
+                          width: 100 + i * 25, 
+                          height: 100 + i * 25, 
+                          left: -50 - i * 12.5, 
+                          top: -50 - i * 12.5 
+                        }}
+                        animate={{
+                          scale: [1, 1.2, 1],
+                          opacity: [0.3, 0.1, 0.3],
+                        }}
+                        transition={{ duration: 3 + i * 0.5, repeat: Infinity, delay: i * 0.3 }}
+                      />
+                    ))}
+                  </motion.div>
 
-            {/* Bottom right */}
-            <div className="absolute bottom-8 right-8 text-right">
-              <p className="font-mono text-xs text-white/40 uppercase tracking-wider">Neural Activity</p>
-              <p className="font-mono text-xs text-cyan-400/80">98.7%</p>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* Gradient overlays */}
-      <div className="absolute inset-0 pointer-events-none z-10">
-        <div className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-[#020617]/80" />
-        <div className="absolute inset-0 bg-gradient-to-r from-[#020617]/50 via-transparent to-[#020617]/50" />
+                  {/* Stats */}
+                  <motion.div className="grid grid-cols-2 gap-4">
+                    {[
+                      { label: 'Builds', value: '12+', icon: Zap, color: 'text-green-400' },
+                      { label: 'Repos', value: '4', icon: GitBranch, color: 'text-cyan-400' },
+                      { label: 'Stack', value: 'Full', icon: Layers, color: 'text-purple-400' },
+                      { label: 'Status', value: 'Live', icon: Activity, color: 'text-blue-400' },
+                    ].map((stat, i) => (
+                      <motion.div
+                        key={stat.label}
+                        className="flex flex-col items-center p-3 rounded-xl border border-white/10 bg-white/5"
+                        initial={{ scale: 0 }}
+                        animate={{ scale: 1 }}
+                        transition={{ delay: 2 + i * 0.1, type: 'spring' }}
+                        whileHover={{ scale: 1.1, backgroundColor: 'rgba(255,255,255,0.08)' }}
+                      >
+                        <stat.icon className={`w-5 h-5 ${stat.color} mb-2`} />
+                        <div className="font-mono text-lg text-white">{stat.value}</div>
+                        <div className="font-mono text-xs text-white/40">{stat.label}</div>
+                      </motion.div>
+                    ))}
+                  </motion.div>
+                </div>
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
       </div>
     </section>
   );

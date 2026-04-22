@@ -295,7 +295,7 @@ export default function About() {
 
           {/* Animated underline */}
           <motion.div 
-            className="h-0.5 bg-gradient-to-r from-transparent via-cyan-400 to-transparent mx-auto mt-4"
+            className="h-0.5 bg-gradient-to-r from-transparent via-purple-400 to-transparent mx-auto mt-4"
             initial={{ width: 0 }}
             whileInView={{ width: '50%' }}
             viewport={{ once: true }}
@@ -322,7 +322,7 @@ export default function About() {
                 style={{
                   opacity: hoveredTag === tag.id ? 0.6 : 0,
                   background: hoveredTag === tag.id 
-                    ? `radial-gradient(circle at ${mousePos.x * 100}% ${mousePos.y * 100}%, rgba(34,211,238,0.3) 0%, transparent 60%)`
+                    ? `radial-gradient(circle at ${mousePos.x * 100}% ${mousePos.y * 100}%, rgba(168, 85, 247, 0.3) 0%, transparent 60%)`
                     : 'none',
                 }}
               />
