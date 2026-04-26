@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState, useCallback } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { 
   Cpu, 
@@ -55,7 +55,6 @@ export default function Hero() {
   const [activeCommand, setActiveCommand] = useState<number | null>(null);
   const [cursorPos, setCursorPos] = useState(0);
   const [bootComplete, setBootComplete] = useState(false);
-  const [isGlitching, setIsGlitching] = useState(false);
 
   // Boot sequence
   useEffect(() => {
@@ -98,17 +97,6 @@ export default function Hero() {
       }
     }, 50);
   };
-
-  // Glitch effect
-  useEffect(() => {
-    const interval = setInterval(() => {
-      if (Math.random() > 0.8) {
-        setIsGlitching(true);
-        setTimeout(() => setIsGlitching(false), 150);
-      }
-    }, 6000);
-    return () => clearInterval(interval);
-  }, []);
 
   return (
     <section

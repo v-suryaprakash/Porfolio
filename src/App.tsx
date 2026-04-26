@@ -4,7 +4,6 @@ import { ScrollTrigger } from 'gsap/ScrollTrigger';
 
 import { ParticleField, NavigationDots } from './components/neural';
 import CustomCursor from './components/interactive/CustomCursor';
-import Hero from './sections/Hero';
 
 import { siteConfig } from './config';
 import './index.css';
@@ -38,7 +37,7 @@ const deferredSectionImports = [
 const deferredSectionOrder = ['about', 'projects', 'skills', 'experience', 'contact', 'footer'] as const;
 type DeferredSectionId = (typeof deferredSectionOrder)[number];
 
-const INITIAL_LOADED_SECTION_INDEX = 2;
+const INITIAL_LOADED_SECTION_INDEX = 0;
 
 function SectionFallback({ id, className }: { id: string; className: string }) {
   return <section id={id} className={className} aria-hidden="true" />;
@@ -46,7 +45,6 @@ function SectionFallback({ id, className }: { id: string; className: string }) {
 
 // Navigation items for dots
 const navItems = [
-  { id: 'hero', label: 'Home' },
   { id: 'about', label: 'About' },
   { id: 'projects', label: 'Projects' },
   { id: 'skills', label: 'Skills' },
@@ -210,7 +208,6 @@ function App() {
 
       {/* Main Content */}
       <main ref={mainRef} className="relative z-10">
-        <Hero />
         {isSectionReady(0) ? (
           <Suspense fallback={<SectionFallback id="about" className="relative w-full min-h-screen z-20 neural-section-layer-strong" />}>
             <About />
