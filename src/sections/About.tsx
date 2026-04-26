@@ -273,7 +273,8 @@ export default function About() {
             transition={{ duration: isGlitching ? 0.15 : 0.6 }}
           >
             <h1 className="font-display text-5xl md:text-7xl lg:text-8xl text-white tracking-tight">
-              {'SURYA PRAKASH'.split('').map((char, i) => (
+              {/* Changed name to SURYA PRAKASH.V */}
+              {'SURYA PRAKASH.V'.split('').map((char, i) => (
                 <motion.span
                   key={i}
                   className="inline-block cursor-default"
@@ -287,7 +288,7 @@ export default function About() {
                     transition: { duration: 0.15 }
                   }}
                 >
-                  {char === ' ' ? '\u00A0' : char}
+                  {char === ' ' ? '\u00A0' : char === '.' ? <span className="text-purple-400">.</span> : char}
                 </motion.span>
               ))}
             </h1>
@@ -302,6 +303,80 @@ export default function About() {
             transition={{ delay: 0.8, duration: 0.8 }}
           />
         </div>
+
+        {/* Quote Section - Added new creative section */}
+        <motion.div
+          className="mt-8 mb-12 max-w-4xl mx-auto text-center"
+          initial={{ opacity: 0, y: 30 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ delay: 0.5 }}
+        >
+          <div className="relative inline-block">
+            <div className="absolute -top-8 left-0 text-6xl text-cyan-400/20 font-serif leading-none">
+              "
+            </div>
+            <motion.h2 
+              className="font-display text-2xl md:text-3xl text-white/90 leading-relaxed"
+              initial={{ opacity: 0 }}
+              whileInView={{ opacity: 1 }}
+              transition={{ delay: 0.3 }}
+            >
+              Building the future by blending{' '}
+              <motion.span 
+                className="text-cyan-400 font-semibold"
+                whileHover={{ scale: 1.05 }}
+                transition={{ type: "spring" }}
+              >
+                AI innovation
+              </motion.span>
+              {' '}with{' '}
+              <motion.span 
+                className="text-purple-400 font-semibold"
+                whileHover={{ scale: 1.05 }}
+                transition={{ type: "spring" }}
+              >
+                strong engineering
+              </motion.span>
+              .
+            </motion.h2>
+            <motion.p 
+              className="text-xl text-white/70 mt-4"
+              initial={{ opacity: 0 }}
+              whileInView={{ opacity: 1 }}
+              transition={{ delay: 0.6 }}
+            >
+              Crafting intelligent systems that{' '}
+              <motion.span 
+                className="text-emerald-400 cursor-pointer"
+                whileHover={{ scale: 1.1 }}
+                whileTap={{ scale: 0.95 }}
+              >
+                scale
+              </motion.span>
+              ,{' '}
+              <motion.span 
+                className="text-cyan-400 cursor-pointer"
+                whileHover={{ scale: 1.1 }}
+                whileTap={{ scale: 0.95 }}
+              >
+                adapt
+              </motion.span>
+              , and{' '}
+              <motion.span 
+                className="text-purple-400 cursor-pointer"
+                whileHover={{ scale: 1.1 }}
+                whileTap={{ scale: 0.95 }}
+              >
+                evolve
+              </motion.span>
+              .
+            </motion.p>
+            <div className="absolute -bottom-8 right-0 text-6xl text-cyan-400/20 font-serif leading-none">
+              "
+            </div>
+          </div>
+        </motion.div>
 
         {/* Tags Grid - Square with Gradient Hover */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4 max-w-3xl mx-auto mb-10">
